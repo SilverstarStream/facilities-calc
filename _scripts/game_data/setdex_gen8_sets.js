@@ -23387,6 +23387,30 @@ var SETDEX_GEN8 =
     }
   },
   "Meowstic": {
+    "Meowstic-M-RS": {
+      "level": 50,
+      "evs": {
+        "sa": 252,
+        "sp": 252
+      },
+      "ivs": {
+        "hp": 15,
+        "at": 15,
+        "df": 15,
+        "sa": 15,
+        "sd": 15,
+        "sp": 15
+      },
+      "moves": [
+        "Rest",
+        "Snore",
+        "Disarming Voice",
+        "Yawn"
+      ],
+      "nature": "Quiet",
+      "item": "Throat Spray",
+      "tier": "RS"
+    },
     "Meowstic-M-1": {
       "level": 50,
       "evs": {
@@ -23482,30 +23506,6 @@ var SETDEX_GEN8 =
       "nature": "Modest",
       "item": "Expert Belt",
       "tier": "Tower"
-    },
-    "Meowstic-M-RS": {
-      "level": 50,
-      "evs": {
-        "sa": 252,
-        "sp": 252
-      },
-      "ivs": {
-        "hp": 15,
-        "at": 15,
-        "df": 15,
-        "sa": 15,
-        "sd": 15,
-        "sp": 15
-      },
-      "moves": [
-        "Rest",
-        "Snore",
-        "Disarming Voice",
-        "Yawn"
-      ],
-      "nature": "Quiet",
-      "item": "Throat Spray",
-      "tier": "RS"
     }
   },
   "Toxtricity": {
