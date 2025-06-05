@@ -1539,7 +1539,7 @@ function validateSetdex() {
 		}
 	}
 	if (!failedValidation) {
-		console.log("No validation issues found.");
+		console.log("No validation issues found for gen " + gen + ".");
 	}
 }
 
