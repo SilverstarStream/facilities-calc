@@ -749,9 +749,10 @@ function getDefaultMultiHits(moveName, ability, item) {
 
 $(".status").bind("keyup change", function () {
 	if ($(this).val() === "Badly Poisoned") {
-		$(this).parent().children(".toxic-counter").show();
+		$(this).siblings(".toxic-counter").show();
+		$(this).siblings(".toxic-counter").val($(this).parent().siblings().find(".item").val() === "Toxic Orb" ? 0 : 1);
 	} else {
-		$(this).parent().children(".toxic-counter").hide();
+		$(this).siblings(".toxic-counter").hide();
 	}
 });
 
