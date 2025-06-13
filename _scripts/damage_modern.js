@@ -579,22 +579,10 @@ function calcBP(attacker, defender, move, field, description, ateizeBoost) {
 
 	if (attacker.curAbility === "Supreme Overlord" && field.faintedCount > 0) {
 		// modifies the base power https://www.smogon.com/forums/threads/scarlet-violet-battle-mechanics-research.3709545/post-9421520
-		let multiplier;
-		switch (field.faintedCount) {
-			case 1:
-				multiplier = 1.1;
-				break;
-			case 2:
-				multiplier = 1.2;
-				break;
-			case 3:
-				multiplier = 1.3;
-				break;
-			case 4:
-				multiplier = 1.4;
-				break;
-			default:
-				multiplier = 1.5;
+		let multiplierValues = [1.1, 1.2, 1.3, 1.4];
+		let multiplier = multiplierValues[field.faintedCount - 1];
+		if (!multiplier) {
+			multiplier = 1.5;
 		}
 		bpMods.push(Math.ceil(0x1000 * multiplier));
 		description.attackerAbility = attacker.curAbility + " (" + multiplier + "x BP)";
