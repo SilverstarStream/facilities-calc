@@ -579,22 +579,10 @@ function calcBP(attacker, defender, move, field, description, ateizeBoost) {
 
 	if (attacker.curAbility === "Supreme Overlord" && field.faintedCount > 0) {
 		// modifies the base power https://www.smogon.com/forums/threads/scarlet-violet-battle-mechanics-research.3709545/post-9421520
-		let multiplier;
-		switch (field.faintedCount) {
-			case 1:
-				multiplier = 1.1;
-				break;
-			case 2:
-				multiplier = 1.2;
-				break;
-			case 3:
-				multiplier = 1.3;
-				break;
-			case 4:
-				multiplier = 1.4;
-				break;
-			default:
-				multiplier = 1.5;
+		let multiplierValues = [1.1, 1.2, 1.3, 1.4];
+		let multiplier = multiplierValues[field.faintedCount - 1];
+		if (!multiplier) {
+			multiplier = 1.5;
 		}
 		bpMods.push(Math.ceil(0x1000 * multiplier));
 		description.attackerAbility = attacker.curAbility + " (" + multiplier + "x BP)";
@@ -1210,27 +1198,28 @@ function getDescriptionPokemonName(pokemon) {
 	// if the setName ends with something in parens, remove the parens
 	let regexMatch = endsInParensRegex.exec(pokemon.setName);
 	let displaySetName = regexMatch ? pokemon.setName.substring(0, regexMatch.index) : pokemon.setName;
+	let setSuffix = displaySetName.substring(displaySetName.lastIndexOf("-"));
+	if (setSuffix.includes(",")) {
+		// BDSP has some sets of the form `speciesName-1,2,3`. Remove all set numbers except the first one.
+		setSuffix = setSuffix.substring(setSuffix.indexOf(","));
+		displaySetName = displaySetName.substring(0, displaySetName.length - setSuffix.length);
+	}
+	if (setSuffix.length > MAX_SET_SUFFIX_LENGTH) {
+		return pokemon.name;
+	}
 	if (pokemon.name in setdex && pokemon.setName in setdex[pokemon.name]) {
-		// the name and setName are straightforward. the setName isn't much longer than the name. setName can simply be returned.
-		if (displaySetName.length > pokemon.name.length + MAX_SET_SUFFIX_LENGTH) {
-			return pokemon.name;
-		}
+		// the name and setName are straightforward. the set name can simply be returned.
 		return displaySetName;
 	}
 	let nameDexEntry = pokedex[pokemon.name];
 	if (nameDexEntry && nameDexEntry.hasBaseForme && nameDexEntry.hasBaseForme in setdex && pokemon.setName in setdex[nameDexEntry.hasBaseForme]) {
 		// the pokemon is some forme. take the set suffix and put it at the end of the forme.
-		let setSuffix = displaySetName.substring(displaySetName.lastIndexOf("-"));
-		if (setSuffix.length > MAX_SET_SUFFIX_LENGTH) {
-			return pokemon.name;
-		}
 		return pokemon.name + setSuffix;
 	}
 	// don't print Gmax in the description
 	return pokemon.name.endsWith("-Gmax") ? pokemon.name.substring(0, pokemon.name.lastIndexOf("-Gmax")) : pokemon.name;
 }
 
-const VERSUS = "vs. ";
 function buildDescription(description) {
 	var output = "";
 	if (description.attackBoost) {
@@ -1285,7 +1274,7 @@ function buildDescription(description) {
 	if (description.isSpread) {
 		output += "(spread) ";
 	}
-	output += VERSUS;
+	output += "vs. ";
 	if (description.defenseBoost) {
 		if (description.defenseBoost > 0) {
 			output += "+";

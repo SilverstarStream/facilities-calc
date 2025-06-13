@@ -749,9 +749,10 @@ function getDefaultMultiHits(moveName, ability, item) {
 
 $(".status").bind("keyup change", function () {
 	if ($(this).val() === "Badly Poisoned") {
-		$(this).parent().children(".toxic-counter").show();
+		$(this).siblings(".toxic-counter").show();
+		$(this).siblings(".toxic-counter").val($(this).parent().siblings().find(".item").val() === "Toxic Orb" ? 0 : 1);
 	} else {
-		$(this).parent().children(".toxic-counter").hide();
+		$(this).siblings(".toxic-counter").hide();
 	}
 });
 
@@ -998,8 +999,8 @@ $(".forme").change(function () {
 	var altForme = pokedex[$(this).val()],
 		container = $(this).closest(".info-group").siblings(),
 		fullSetName = container.find(".select2-chosen").first().text(),
-		pokemonName = fullSetName.substring(0, fullSetName.indexOf(" (")),
-		setName = fullSetName.substring(fullSetName.indexOf("(") + 1, fullSetName.lastIndexOf(")"));
+		pokemonName = fullSetName.substring(0, fullSetName.indexOf(" ("));
+	let setName = fullSetName.substring(fullSetName.indexOf("(") + 1, fullSetName.lastIndexOf(")"));
 
 	if (gen != 9 || !$(this).closest(".poke-info").find(".tera").prop("checked")) {
 		$(this).parent().siblings().find(".type1").val(altForme.t1);
@@ -1914,12 +1915,12 @@ function getSetOptions() {
 			"text": pokeName
 		});
 		if (pokeName in setdex) {
-			for (setName in setdex[pokeName]) {
+			for (const setName in setdex[pokeName]) {
 				setOptions.push(setOptionsObject(pokeName, setName));
 			}
 		}
 		if (pokeName in SETDEX_CUSTOM) {
-			for (setName in SETDEX_CUSTOM[pokeName]) {
+			for (const setName in SETDEX_CUSTOM[pokeName]) {
 				setOption = setOptionsObject(pokeName, setName);
 				setOption.set = setOption.text; // the selectable text matches the display text
 				customSetOptions.push(setOption);
