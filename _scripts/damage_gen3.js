@@ -122,10 +122,7 @@ function getDamageResultADV(attacker, defender, move, field) {
 		description.moveBP = basePower;
 		break;
 	case "Smelling Salts":
-		basePower = move.bp;
-		if (defender.status === "Paralyzed") {
-			basePower *= 2;
-		}
+		basePower = (defender.status === "Paralyzed") ? move.bp * 2 : move.bp;
 		description.moveBP = basePower;
 		break;
 	case "Triple Kick":
