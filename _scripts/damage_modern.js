@@ -606,7 +606,7 @@ function calcBP(attacker, defender, move, field, description, ateizeBoost) {
 	}
 
 	// Heatproof was a power mod until gen 9; it is currently an attack mod https://www.smogon.com/forums/threads/bug-reports-v4-read-original-post-before-posting.3663703/post-9780607
-	if (defender.curAbility === "Heatproof" && moveType === "Fire" && (gen <= 8 || gen == 80)) {
+	if (defender.curAbility === "Heatproof" && moveType === "Fire" && gen <= 8) {
 		bpMods.push(0x800);
 		description.defenderAbility = defender.curAbility;
 	} else if (defender.curAbility === "Dry Skin" && moveType === "Fire") {
@@ -626,8 +626,7 @@ function calcBP(attacker, defender, move, field, description, ateizeBoost) {
 		attacker.item === "Adamant Crystal" && attacker.name === "Dialga-O" ||
 		attacker.item === "Lustrous Orb" && attacker.name === "Palkia" ||
 		attacker.item === "Lustrous Globe" && attacker.name === "Palkia-O" ||
-		(gen <= 8 || gen == 80) && attacker.item === "Griseous Orb" && attacker.name === "Giratina-O" ||
-		gen >= 9 && gen != 80 && attacker.item === "Griseous Orb" && attacker.name === "Giratina" ||
+		attacker.item === "Griseous Orb" && attacker.name === (gen <= 8 ? "Giratina-O" : "Giratina") ||
 		attacker.item === "Griseous Core" && attacker.name === "Giratina-O" ||
 		attacker.item === "Soul Dew" && gen >= 7 && (attacker.name === "Latios" || attacker.name === "Latias")))) {
 		bpMods.push(0x1333);
@@ -791,7 +790,7 @@ function calcAtk(attacker, defender, move, field, description) {
 
 	// Heatproof was a power mod until gen 9 https://www.smogon.com/forums/threads/bug-reports-v4-read-original-post-before-posting.3663703/post-9780607
 	if (defender.curAbility === "Thick Fat" && (moveType === "Fire" || moveType === "Ice") ||
-		defender.curAbility === "Heatproof" && moveType === "Fire" && gen >= 9 && gen != 80 ||
+		defender.curAbility === "Heatproof" && moveType === "Fire" && gen >= 9 ||
 		defender.curAbility === "Water Bubble" && moveType === "Fire" ||
 		defender.curAbility === "Purifying Salt" && moveType === "Ghost") {
 		atMods.push(0x800);
@@ -1626,7 +1625,7 @@ function canKnockOffItem(attacker, defender, terrain) {
 	return !(getEffectiveItem(defender, attacker, terrain) === "" ||
 	defender.item === "Lustrous Globe" && defender.name === "Palkia-O" ||
 	defender.item === "Adamant Crystal" && defender.name === "Dialga-O" ||
-	defender.item === "Griseous Orb" && (gen <= 8 || gen == 80) && defender.name === "Giratina-O" ||
+	defender.item === "Griseous Orb" && gen <= 8 && defender.name === "Giratina-O" ||
 	defender.item === "Griseous Core" && defender.name === "Giratina-O" ||
 	defender.item.endsWith("Plate") && defender.name.startsWith("Arceus") ||
 	defender.item.endsWith(" Z") ||
