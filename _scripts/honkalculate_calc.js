@@ -79,7 +79,7 @@ function MassPokemon(speciesName, setName) {
 	if (formeNum != 0) {
 		pokemon = pokedex[pokemon.formes[formeNum]];
 	}
-	let autoLevel = parseInt(localStorage.getItem("autolevelGen" + gen));
+	let autoLevel = parseInt(localStorage.getItem(LOCAL_AUTOLEVEL_KEY_PREFIX + gameId));
 	let massPoke = {
 		"name": speciesName,
 		"setName": setName,
@@ -145,10 +145,10 @@ function MassPokemon(speciesName, setName) {
 	for (let n = 0; n < 4; n++) {
 		let moveName = set.moves[n];
 		let defaultDetails = moves[moveName] || moves["(No Move)"];
-		if (gen == 7 && defaultDetails.zp && defaultDetails.type && defaultDetails.type !== "None" &&
+		if (gameId == 7 && defaultDetails.zp && defaultDetails.type && defaultDetails.type !== "None" &&
 			massPoke.item.endsWith(" Z") && massPoke.item.startsWith(defaultDetails.type.substring(0, defaultDetails.type.length - 1))) {
 			massPoke.moves.push(getZMove(moveName, massPoke, defaultDetails));
-		} else if (gen == 8 && set.startDmax) {
+		} else if (gameId == 8 && set.startDmax) {
 			massPoke.moves.push(getMaxMove(moveName, massPoke, defaultDetails));
 		} else {
 			massPoke.moves.push($.extend({}, defaultDetails, {
@@ -320,12 +320,12 @@ function getSelectedTier() {
 }
 
 var calculateMovesOfAttacker;
-$(".gen").change(function () {
+$(".game").change(function () {
 	adjustTierBorderRadius();
 	let defaultChecked = "#All";
 	let thresholdLabel = "";
 	calculateMovesOfAttacker = CALCULATE_MOVES_OF_ATTACKER_MODERN;
-	switch (gen) {
+	switch (gameId) {
 	case 3:
 		calculateMovesOfAttacker = CALCULATE_MOVES_OF_ATTACKER_ADV;
 		thresholdLabel = "50+";
@@ -369,20 +369,20 @@ const squaredLeftCorner = { "border-top-left-radius": 0, "border-bottom-left-rad
 const roundedLeftCorner = { "border-top-left-radius": "8px", "border-bottom-left-radius": "8px" };
 function adjustTierBorderRadius() {
 	 // Used to round the tier buttons to appear like the gens or mode buttons
-	if (gen == 3 || gen == 5 || gen == 6 || gen == 7) {
+	if (gameId == 3 || gameId == 5 || gameId == 6 || gameId == 7) {
 		$("#All").next("label").css(squaredRightCorner);
 		$("#threshold").next("label").css(roundedRightCorner);
 	}
-	else if (gen == 4) {
+	else if (gameId == 4) {
 		$("#All").next("label").css(squaredRightCorner);
 		$("#threshold").next("label").css(squaredRightCorner);
 		$("#HallR10").next("label").css(roundedRightCorner);
 	}
-	else if (gen == 8) {
+	else if (gameId == 8) {
 		$("#RS").next("label").css(roundedLeftCorner);
 		$("#Tower").next("label").css(roundedRightCorner);
 	}
-	else if (gen == 80) {
+	else if (gameId == 80) {
 		$("#All").next("label").css(squaredRightCorner);
 		$("#DM").next("label").css(roundedRightCorner);
 	}
@@ -401,7 +401,7 @@ function constructDataTable() {
 				targets: 3 // koChance = col 3
 			},
 			{
-				width: "5%", // this makes the column as small as possible
+				width: "5%", // this gives the column a small width
 				targets: 4 // speed = col 4
 			}
 		],

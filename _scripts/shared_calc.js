@@ -154,11 +154,11 @@ $("#autolevel").change(function () {
 		p2.find(".level").val(autoLevel);
 	}
 	$(".level").change();
-	localStorage.setItem("autolevelGen" + gen, autoLevel);
+	localStorage.setItem(LOCAL_AUTOLEVEL_KEY_PREFIX + gameId, autoLevel);
 });
 
 $("#autoivs-center").change(function () {
-	// gens 3 and 4 us an input box instead of a dropdown. gen 7 was the last gen to scale IVs
+	// gens 3 and 4 use an input box instead of a dropdown. gen 7 was the last gen to scale IVs
 	if (gen <= 4 || gen >= 8) {
 		return;
 	}
@@ -408,7 +408,7 @@ function autoWeatherAbilities(ability) {
 	case "Sand Stream":
 		return "Sand";
 	case "Snow Warning":
-		return (gen <= 8 || gen == 80) ? "Hail" : "Snow";
+		return gen <= 8 ? "Hail" : "Snow";
 	case "Desolate Land":
 		return "Harsh Sun";
 	case "Primordial Sea":
@@ -848,6 +848,7 @@ $(".set-selector").bind("change", function () {
 	$("#wp" + side).prop("checked", false);
 	$("#clang" + side).prop("checked", false);
 	$("#evo" + side).prop("checked", false);
+	let autolevelKey = LOCAL_AUTOLEVEL_KEY_PREFIX + gameId;
 	var moveObj;
 	var itemObj = pokeObj.find(".item");
 	var abilityObj = pokeObj.find(".ability");
@@ -863,7 +864,7 @@ $(".set-selector").bind("change", function () {
 	curItems[pokeIndex] = ""; // clear curItem so that the undo of a held seed is not applied to this new mon
 	if (pokemonName in setdexAll && setName in setdexAll[pokemonName]) {
 		var set = setdexAll[pokemonName][setName];
-		pokeObj.find(".level").val(set.level ? set.level : (localStorage.getItem("autolevelGen" + gen) ? parseInt(localStorage.getItem("autolevelGen" + gen)) : 50));
+		pokeObj.find(".level").val(set.level ? set.level : (localStorage.getItem(autolevelKey) ? parseInt(localStorage.getItem(autolevelKey)) : 50));
 		let autoIVs = getAutoIVValue(side);
 		pokeObj.find(".hp .evs").val(set.evs && typeof set.evs.hp !== "undefined" ? set.evs.hp : 0);
 		pokeObj.find(".hp .ivs").val(set.ivs && typeof set.ivs.hp !== "undefined" ? set.ivs.hp : autoIVs);
@@ -880,18 +881,18 @@ $(".set-selector").bind("change", function () {
 			setSelectValueIfValid(moveObj, set.moves[i], "(No Move)");
 			moveObj.change();
 		}
-		if (gen == 8 && pokemonName in setdex && setName in setdex[pokemonName]) {
+		if (gameId == 8 && pokemonName in setdex && setName in setdex[pokemonName]) {
 			// all AI mons have a dynamax level of 0
 			pokeObj.find(".max-level").val(0);
 		}
-		if (set.startDmax && gen == 8) {
+		if (gameId == 8 && set.startDmax) {
 			pokeObj.find(".max").prop("checked", true);
-		} else if (set.startTera && gen == 9) {
+		} else if (gameId == 9 && set.startTera) {
 			pokeObj.find(".tera").prop("checked", true);
 		}
 	} else {
 		// Blank set
-		pokeObj.find(".level").val(localStorage.getItem("autolevelGen" + gen) ? parseInt(localStorage.getItem("autolevelGen" + gen)) : 50);
+		pokeObj.find(".level").val(localStorage.getItem(autolevelKey) ? parseInt(localStorage.getItem(autolevelKey)) : 50);
 		pokeObj.find(".hp .evs").val(0);
 		pokeObj.find(".hp .ivs").val(31);
 		for (i = 0; i < STATS.length; i++) {
@@ -1218,10 +1219,10 @@ function getMoveDetails(moveInfo, attacker) {
 	let moveName = moveInfo.find("select.move-selector").val();
 	let defaultDetails = moves[moveName];
 
-	if (gen == 7 && moveInfo.find("input.move-z").prop("checked") && moveName !== "Struggle" && "zp" in defaultDetails) {
+	if (gameId == 7 && moveInfo.find("input.move-z").prop("checked") && moveName !== "Struggle" && "zp" in defaultDetails) {
 		return getZMove(moveName, attacker, defaultDetails, moveInfo);
 	}
-	if (gen == 8 && moveInfo.find("input.move-max").prop("checked") && moveName !== "Struggle") {
+	if (gameId == 8 && moveInfo.find("input.move-max").prop("checked") && moveName !== "Struggle") {
 		return getMaxMove(moveName, attacker, defaultDetails, moveInfo);
 	}
 
@@ -1540,7 +1541,7 @@ function validateSetdex() {
 		}
 	}
 	if (!failedValidation) {
-		console.log("No validation issues found for gen " + gen + ".");
+		console.log("No validation issues found for gameId " + gameId + ".");
 	}
 }
 
@@ -1680,20 +1681,36 @@ function isFacilitySet(speciesName, setName) {
 	return false;
 }
 
-var gen, pokedex, setdex, setdexAll, typeChart, moves, abilities, items, calculateAllMoves;
+// the keys for this object are the values under the game-select tag
+const GAME_GENS = {
+	3: { game: "em" },
+	4: { game: "pthgss" },
+	5: { game: "bw" },
+	6: { game: "oras" },
+	7: { game: "usum" },
+	8: { game: "swsh" },
+	80: { game: "bdsp", gen: 8 },
+	9: { game: "sv" }
+};
+const LOCAL_SELECTED_GAME_KEY = "selectedGen";
+const LOCAL_AUTOLEVEL_KEY_PREFIX = "autolevelGen";
+
+var gameId, gen, pokedex, setdex, setdexAll, typeChart, moves, abilities, items, calculateAllMoves;
 var STATS = STATS_GSC;
 var calcHP = CALC_HP_ADV;
 var calcStat = CALC_STAT_ADV;
-$(".gen").change(function () {
-	gen = ~~$(this).val();
-	localStorage.setItem("selectedGen", gen);
+$(".game").change(function () {
+	gameId = ~~$(this).val();
+	let gameGen = GAME_GENS[gameId];
+	gen = gameGen.gen ? gameGen.gen : gameId;
+	localStorage.setItem(LOCAL_SELECTED_GAME_KEY, gameId);
 
 	setGenProperties();
 	$("#autolevel-title").text((gen == 4 ? "AI " : "") + "Auto-Level to:");
 	setdexAll = joinDexes([setdex, SETDEX_CUSTOM]);
 	clearField();
-	$(".gen-specific.g" + gen).show();
-	$(".gen-specific").not(".g" + gen).hide();
+	$(".gen-specific.g" + gameId).show();
+	$(".gen-specific").not(".g" + gameId).hide();
 	let typeOptions = getSelectOptions(Object.keys(typeChart));
 	$("select.type1").find("option").remove().end().append(typeOptions);
 	$("select.type2").find("option").remove().end().append("<option value=\"\">(none)</option>" + typeOptions);
@@ -1727,7 +1744,7 @@ function setGenProperties() {
 	typeChart = TYPE_CHART_XY;
 	calculateAllMoves = CALCULATE_ALL_MOVES_MODERN;
 	let gimmickType, plus2StatsPath1, plus2StatsPath2, ivList, forumLink;
-	if (gen == 3) {
+	if (gameId == 3) {
 		pokedex = POKEDEX_ADV;
 		setdex = SETDEX_EM;
 		typeChart = TYPE_CHART_GSC;
@@ -1737,7 +1754,7 @@ function setGenProperties() {
 		calculateAllMoves = CALCULATE_ALL_MOVES_ADV;
 		ivList = IV_LISTS.IVS_GEN3;
 		forumLink = "https://www.smogon.com/forums/threads/gen-iii-battle-frontier-discussion-and-records.3648697/";
-	} else if (gen == 4) {
+	} else if (gameId == 4) {
 		pokedex = POKEDEX_DPP;
 		setdex = SETDEX_PHGSS;
 		typeChart = TYPE_CHART_GSC;
@@ -1746,7 +1763,7 @@ function setGenProperties() {
 		abilities = ABILITIES_DPP;
 		calculateAllMoves = CALCULATE_ALL_MOVES_PTHGSS;
 		forumLink = "https://www.smogon.com/forums/threads/4th-generation-battle-facilities-discussion-and-records.3663294/";
-	} else if (gen == 5) {
+	} else if (gameId == 5) {
 		pokedex = POKEDEX_BW;
 		setdex = SETDEX_GEN5;
 		typeChart = TYPE_CHART_GSC;
@@ -1755,7 +1772,7 @@ function setGenProperties() {
 		abilities = ABILITIES_BW;
 		ivList = IV_LISTS.IVS_OTHER;
 		forumLink = "https://www.smogon.com/forums/threads/black-white-battle-subway-records-now-with-gen-4-records.102593/";
-	} else if (gen == 6) {
+	} else if (gameId == 6) {
 		pokedex = POKEDEX_XY;
 		setdex = SETDEX_GEN6;
 		moves = MOVES_XY;
@@ -1763,7 +1780,7 @@ function setGenProperties() {
 		abilities = ABILITIES_XY;
 		ivList = IV_LISTS.IVS_OTHER;
 		forumLink = "https://www.smogon.com/forums/threads/battle-maison-discussion-records.3492706/";
-	} else if (gen == 7) {
+	} else if (gameId == 7) {
 		pokedex = POKEDEX_SM;
 		setdex = SETDEX_GEN7;
 		moves = MOVES_SM;
@@ -1773,7 +1790,7 @@ function setGenProperties() {
 		plus2StatsPath1 = "_images/eevee.png";
 		plus2StatsPath2 = "_images/eevium.png";
 		forumLink = "https://www.smogon.com/forums/threads/battle-tree-discussion-and-records.3587215/";
-	} else if (gen == 8) {
+	} else if (gameId == 8) {
 		pokedex = POKEDEX_SS;
 		setdex = SETDEX_GEN8;
 		moves = MOVES_SS;
@@ -1781,14 +1798,14 @@ function setGenProperties() {
 		abilities = ABILITIES_SS;
 		gimmickType = "Dynamaxed";
 		forumLink = "https://www.smogon.com/forums/threads/swsh-battle-facilities-discussion-records.3656190/";
-	} else if (gen == 80) {
+	} else if (gameId == 80) {
 		pokedex = POKEDEX_BDSP;
 		setdex = SETDEX_GEN80;
 		moves = MOVES_SS;
 		items = ITEMS_DPP;
 		abilities = ABILITIES_SS;
 		forumLink = "https://www.smogon.com/forums/threads/bdsp-battle-tower-discussion-records.3693739/";
-	} else if (gen == 9) {
+	} else if (gameId == 9) {
 		pokedex = POKEDEX_SV;
 		setdex = {};
 		moves = MOVES_SV;
@@ -1829,7 +1846,8 @@ function joinDexes(components) {
 }
 
 function clearField() {
-	var storedLevel = localStorage.getItem("autolevelGen" + gen) ? localStorage.getItem("autolevelGen" + gen) : 50;
+	let autolevelKey = LOCAL_AUTOLEVEL_KEY_PREFIX + gameId;
+	let storedLevel = localStorage.getItem(autolevelKey) ? localStorage.getItem(autolevelKey) : 50;
 	if (gen == 3 || gen == 4) {
 		$("#autolevel-box").val(storedLevel);
 	} else {
@@ -1966,14 +1984,12 @@ function getSelectOptions(arr, sort, defaultIdx) {
 }
 
 $(document).ready(function () {
-	let localGen = localStorage.getItem("selectedGen");
-	let latestGenJQuery = $(".gen").last();
-	let genJQuery = localGen == null ? latestGenJQuery : $("#gen" + localGen);
-	if (genJQuery.length == 0) {
-		genJQuery = latestGenJQuery;
+	let localGameId = localStorage.getItem(LOCAL_SELECTED_GAME_KEY);
+	let gameJQuery = !localGameId ? $(".game").last() : $("#game" + localGameId);
+	if (gameJQuery.length > 0) {
+		gameJQuery.prop("checked", true);
+		gameJQuery.change();
 	}
-	genJQuery.prop("checked", true);
-	genJQuery.change();
 	//$(".terrain-trigger").bind("change keyup", getTerrainEffects);
 	//$(".calc-trigger").bind("change keyup", calculate);
 	$(".set-selector").select2({

@@ -116,14 +116,24 @@ function getDamageResultADV(attacker, defender, move, field) {
 		basePower = Math.max(1, Math.floor(150 * attacker.curHP / attacker.maxHP));
 		description.moveBP = basePower;
 		break;
+	case "Facade":
+		basePower = move.bp;
+		if (["Paralyzed", "Poisoned", "Badly Poisoned", "Burned"].includes(attacker.status)) {
+			basePower *= 2;
+			description.moveBP = basePower;
+		}
+		break;
 	case "Low Kick":
 		var w = defender.weight;
 		basePower = w >= 200 ? 120 : w >= 100 ? 100 : w >= 50 ? 80 : w >= 25 ? 60 : w >= 10 ? 40 : 20;
 		description.moveBP = basePower;
 		break;
 	case "Smelling Salts":
-		basePower = (defender.status === "Paralyzed") ? move.bp * 2 : move.bp;
-		description.moveBP = basePower;
+		basePower = move.bp;
+		if (defender.status === "Paralyzed") {
+			basePower *= 2;
+			description.moveBP = basePower;
+		}
 		break;
 	case "Triple Kick":
 		basePower = move.bp;
