@@ -25,51 +25,6 @@ var deletecustom = function () {
 	}
 };
 
-function migrateOldSets() {
-	if (confirm("This will run a script that will attempt to migrate your old custom sets from cookies to localStorage. It may take some time and will not always work, and there is a small chance it will erase your current custom sets. Would you like to proceed?")) {
-		if (readCookie("custom") != null) {
-			var oldData = JSON.parse(readCookie("custom"));
-			for (var i = 0; i < Object.keys(oldData).length; i++) {
-				var species = (Object.keys(oldData)[i]);
-				if (SETDEX_CUSTOM[species] == null) SETDEX_CUSTOM[species] = {};
-				var setName = (Object.keys(oldData[species]));
-				for (var j = 0; j < setName.length; j++) {
-					SETDEX_CUSTOM[species][setName] = oldData[species][setName];
-				}
-			}
-			localStorage.setItem("custom", JSON.stringify(SETDEX_CUSTOM));
-			eraseCookie("custom");
-			if (!alert("Success! Refreshing the page...")) {window.location.reload();}
-		} else {
-			alert("Aborted, no old custom set cookies found.");
-		}
-	}
-}
-
-function createCookie(name, value, days) {
-	if (days) {
-		var date = new Date();
-		date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-		var expires = "; expires=" + date.toGMTString();
-	} else var expires = "";
-	document.cookie = name + "=" + value + expires + "; path=/";
-}
-
-function readCookie(name) {
-	var nameEQ = name + "=";
-	var ca = document.cookie.split(";");
-	for (var i = 0; i < ca.length; i++) {
-		var c = ca[i];
-		while (c.charAt(0) == " ") c = c.substring(1, c.length);
-		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-	}
-	return null;
-}
-
-function eraseCookie(name) {
-	createCookie(name, "", -1);
-}
-
 var savecustom = function () {
 	//first, to parse it all from the PS format
 	let string = $("#customMon").val();
@@ -151,7 +106,7 @@ var savecustom = function () {
 			firstParenth = lines[0].lastIndexOf("(");
 			lastParenth = lines[0].lastIndexOf(")");
 			species = lines[0].substring(firstParenth + 1, lastParenth).trim();
-			spreadName = lines[0].substring(0, firstParenth-1).trim();
+			spreadName = lines[0].substring(0, firstParenth).trim();
 		} else {
 			species = lines[0].split("@")[0].trim(); //species is always first
 		}
@@ -349,9 +304,3 @@ function rejectSet(species, spreadName) {
 	}
 	return false;
 }
-
-$("document").ready(function () {
-	if (readCookie("custom") == null) {
-		$("#migrate").css("display", "none");
-	}
-});
