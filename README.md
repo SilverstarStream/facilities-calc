@@ -2,7 +2,7 @@
 
 By [Eisenherz](https://www.smogon.com/forums/members/eisenherz.326390/) & SilverstarStream, based on the BSS damage calculator by cant say ([@jakecantsay](https://twitter.com/jakecantsay)) and [Lego](https://www.smogon.com/forums/members/188833/).
 
-The calculator includes all BDSP Tower / SwSh Tower / Restricted Sparring / Battle Tree / Battle Maison / Battle Subway sets preloaded and has been updated for SV.
+The calculator includes all BDSP Tower / SwSh Tower / Restricted Sparring / Battle Tree / Battle Maison / Battle Subway / Sinnoh Battle Frontier / Hoenn Battle Frontier sets preloaded and has been updated for SV.
 
 Custom sets can be input within the calculator using the official Pokemon Showdown format.
 
@@ -26,7 +26,7 @@ This damage calculator is committed to accurate and correct calculations. It use
 * Gen V-IX: this calculator is a fork of a calculator based on the Gen V [damage formula research](https://www.smogon.com/bw/articles/bw_complete_damage_formula) (the formula explained up through Gen VII: [DaWoblefet's Damage Dissertation](https://www.trainertower.com/dawoblefets-damage-dissertation/))
 * Gen VIII-IX: additional effects are researched on Smogon (SwSh [mechanics research](https://www.smogon.com/forums/threads/sword-shield-battle-mechanics-research.3655528/) | SV [mechanics research](https://www.smogon.com/forums/threads/scarlet-violet-battle-mechanics-research.3709545/))
 
-If there are any errors found while using the calc, please reach out through the [Battle Facilities Discord](https://discord.gg/8RMcwybe2t).
+If there are any errors found while using the calc, please report the issue by either reaching out through the [Battle Facilities Discord](https://discord.gg/8RMcwybe2t) or [submitting an issue](https://github.com/to-metrion/to-metrion.github.io/issues/new/choose).
 
 ## Contributing:
 The site is powered by Jekyll, with linting by nodejs' eslint.
