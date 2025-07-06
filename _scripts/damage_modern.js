@@ -579,8 +579,7 @@ function calcBP(attacker, defender, move, field, description, ateizeBoost) {
 
 	if (attacker.curAbility === "Supreme Overlord" && field.faintedCount > 0) {
 		// modifies the base power https://www.smogon.com/forums/threads/scarlet-violet-battle-mechanics-research.3709545/post-9421520
-		let multiplierValues = [1.1, 1.2, 1.3, 1.4];
-		let multiplier = multiplierValues[field.faintedCount - 1];
+		let multiplier = [1.1, 1.2, 1.3, 1.4][field.faintedCount - 1];
 		if (!multiplier) {
 			multiplier = 1.5;
 		}
@@ -600,7 +599,8 @@ function calcBP(attacker, defender, move, field, description, ateizeBoost) {
 		attacker.curAbility === "Flare Boost" && attacker.status === "Burned" && moveCategory === "Special" ||
 		attacker.curAbility === "Toxic Boost" && (attacker.status === "Poisoned" || attacker.status === "Badly Poisoned") && moveCategory === "Physical" ||
 		attacker.curAbility === "Strong Jaw" && move.isBite ||
-		attacker.curAbility === "Mega Launcher" && move.isPulse) {
+		attacker.curAbility === "Mega Launcher" && move.isPulse ||
+		attacker.curAbility === "Sharpness" && move.isSlicing) {
 		bpMods.push(0x1800);
 		description.attackerAbility = attacker.curAbility;
 	}
@@ -764,8 +764,7 @@ function calcAtk(attacker, defender, move, field, description) {
 		attacker.curAbility === "Gorilla Tactics" && moveCategory === "Physical" && !attacker.isDynamax ||
 		attacker.curAbility === "Transistor" && gen <= 8 && moveType === "Electric" ||
 		attacker.curAbility === "Dragon's Maw" && moveType === "Dragon" ||
-		attacker.curAbility === "Rocky Payload" && moveType === "Rock" ||
-		attacker.curAbility === "Sharpness" && move.isSlicing) {
+		attacker.curAbility === "Rocky Payload" && moveType === "Rock") {
 		atMods.push(0x1800);
 		description.attackerAbility = attacker.curAbility;
 	} else if (attacker.curAbility === "Flash Fire" && attacker.isAbilityActivated && moveType === "Fire" ||
