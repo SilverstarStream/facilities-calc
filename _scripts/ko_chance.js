@@ -1,16 +1,17 @@
+var initialHP = 0;
+var defenderMaxHP = 0;
 var eotWeather = 0;
 var eotTotal = 0;
 var berryRecovery = 0;
 var berryThreshold = 0;
-var toxicCounter = 0;
-var isFlameOrb = false;
+var initialToxicCounter = null;
 var isToxicOrb = false;
+var flameOrbValue = 0;
 function setKOChanceText(result, move, moveHits, attacker, defender, field, damageInfo, firstHitDamageInfo) {
 	// damageInfo contains a damageMap, which maps damage values to # of instances of that damage value.
 	// For multihit moves, the damageMap is the sum of however many hits were defined, and does not represent an individual strike.
 	// damageInfo also contains a property mapCombinations, which represents the total number of combinations of damage values.
 	// firstHitDamageInfo is the same as damageInfo, but accounts for one-time mods like resist berries. If there are none of these mods, firstHitMap is simply set to damageMap
-
 	if (isNaN(firstHitDamageInfo.max)) {
 		result.koChanceText = "something broke; please tell Silver or Eisen";
 		return;
@@ -32,7 +33,6 @@ function setKOChanceText(result, move, moveHits, attacker, defender, field, dama
 	if (move.isZ || move.isMax) {
 		moveAccuracy = 100;
 	} else if (move.acc) {
-		// all genie sig moves have perfect acc in rain, except the pink one's.
 		if (move.acc === 101 || (move.name === "Blizzard" && (field.weather === "Hail" || field.weather === "Snow")) ||
 			(["Thunder", "Hurricane", "Bleakwind Storm", "Sandsear Storm", "Wildbolt Storm"].includes(move.name) && field.weather.includes("Rain")) ||
 			(["Astonish", "Body Slam", "Dragon Rush", "Extrasensory", "Flying Press", "Heat Crash", "Heavy Slam",
@@ -64,6 +64,7 @@ function setKOChanceText(result, move, moveHits, attacker, defender, field, dama
 		}
 	}
 
+	defenderMaxHP = defender.maxHP;
 	// Set up berry values
 	let berryText = setUpBerryValues(attacker, defender);
 
@@ -75,10 +76,10 @@ function setKOChanceText(result, move, moveHits, attacker, defender, field, dama
 	eotWeather = calcWeatherEOT(defender, effectiveDefenderItem, field, eotText, eotHealingText);
 	eotTotal = eotWeather + calcOtherEOT(attacker, defender, effectiveDefenderItem, field, eotText, eotHealingText);
 
-	let targetHP = defender.curHP + calcHazards(defender, field, hazardText);
+	initialHP = defender.curHP + calcHazards(defender, field, hazardText);
 
 	// Check if a multihit can OHKO.
-	let multiResult = checkMultiHitOHKO(moveHits, result, targetHP, attacker, defender, move, damageInfo, firstHitDamageInfo);
+	let multiResult = checkMultiHitOHKO(moveHits, result, firstHitDamageInfo);
 	if (multiResult && multiResult.hitCount <= moveHits && multiResult.koCombinations) {
 		// checkMultiHitOHKO() uses the base damage of each strike to calculate, so the mapCombinations need to be based on that too.
 		let temp = damageInfo.mapCombinations;
@@ -90,32 +91,27 @@ function setKOChanceText(result, move, moveHits, attacker, defender, field, dama
 		// no multihit OHKO found, so currently treating this as though a berry must have been eaten
 		eotHealingText.push(berryText);
 		berryText = "";
-		targetHP += berryRecovery;
+		initialHP += berryRecovery;
 		berryRecovery = 0;
 		berryThreshold = 0;
 	}
 
 	// Check for OHKO chance
-	if (firstHitDamageInfo.min >= targetHP) {
+	if (firstHitDamageInfo.min >= initialHP) {
 		setResultText(result, move, 1, moveAccuracy, GUARANTEED, damageInfo, hazardText, "");
 		return;
 	}
 	isToxicOrb = defender.item === "Toxic Orb" && defender.status === "Badly Poisoned";
-	isFlameOrb = defender.item === "Flame Orb" && defender.status === "Burned";
-	if (isFlameOrb) {
-		// The KO without eot has already been checked, so now permanently correct for a burn that was applied via Flame Orb
-		// Toxic Orb is accounted for by initializing to 0/16 toxic damage
-		targetHP += getBurnEOT(defender);
-	}
-	if (checkHPThreshold(targetHP + berryRecovery, 0, firstHitDamageInfo.min, defender.maxHP)) {
+	flameOrbValue = defender.item === "Flame Orb" && defender.status === "Burned" ? getBurnEOT(defender) : 0;
+	if (checkHPThreshold(0, firstHitDamageInfo.min, 1)) {
 		// since there was not a KO from the first condition, this OHKO could only be guaranteed by eot damage
 		setResultText(result, move, 1, moveAccuracy, GUARANTEED, damageInfo, hazardText.concat(eotText), "");
 		return;
 	}
-	if (firstHitDamageInfo.max >= targetHP || checkHPThreshold(targetHP + berryRecovery, 0, firstHitDamageInfo.max, defender.maxHP)) {
+	if (firstHitDamageInfo.max >= initialHP || checkHPThreshold(0, firstHitDamageInfo.max, 1)) {
 		let koCombinations = 0;
 		for (const [damageValue, combinations] of firstHitDamageInfo.damageMap.entries()) {
-			if (damageValue >= targetHP || checkHPThreshold(targetHP + berryRecovery, 0, damageValue, defender.maxHP)) {
+			if (damageValue >= initialHP || checkHPThreshold(0, damageValue, 1)) {
 				koCombinations += combinations;
 			}
 		}
@@ -124,13 +120,12 @@ function setKOChanceText(result, move, moveHits, attacker, defender, field, dama
 		setResultText(result, move, 1, moveAccuracy, koCombinations, damageInfo, berryRecovery ? hazardText : hazardText.concat(eotText), "");
 		return;
 	}
-	incrementToxicCounter();
 
 	// apply all eot text
 	hazardText = hazardText.concat(eotText, eotHealingText);
 
 	// Calc 2-4HKO
-	let nhkoResult = calculateNHKO(4, targetHP, defender.maxHP, damageInfo, firstHitDamageInfo);
+	let nhkoResult = calculateNHKO(4, damageInfo, firstHitDamageInfo);
 	if (nhkoResult) {
 		setResultText(result, move, nhkoResult.hitCount, moveAccuracy, nhkoResult.koCombinations, damageInfo, hazardText, nhkoResult.berryKO ? berryText : "");
 		return;
@@ -138,16 +133,14 @@ function setKOChanceText(result, move, moveHits, attacker, defender, field, dama
 
 	// 5+HKO. Assume that any held berry will be/has been eaten.
 	for (let hitCount = 5; hitCount <= 9; hitCount++) {
-		let nonAttackedHP = targetHP + berryRecovery + (hitCount - 1) * eotTotal;
 		// even though it's easy to give an accurate chance of a 5+HKO with damage maps, keep the output text simple.
-		if (checkHPThreshold(nonAttackedHP, 0, firstHitDamageInfo.min + damageInfo.min * (hitCount - 1), defender.maxHP)) {
+		if (checkHPThreshold(0, firstHitDamageInfo.min + damageInfo.min * (hitCount - 1), hitCount)) {
 			setResultText(result, move, hitCount, moveAccuracy, GUARANTEED, false, hazardText, berryText);
 			return;
-		} else if (checkHPThreshold(nonAttackedHP, 0, firstHitDamageInfo.max + damageInfo.max * (hitCount - 1), defender.maxHP)) {
+		} else if (checkHPThreshold(0, firstHitDamageInfo.max + damageInfo.max * (hitCount - 1), hitCount)) {
 			setResultText(result, move, hitCount, moveAccuracy, 0, false, hazardText, berryText);
 			return;
 		}
-		incrementToxicCounter();
 	}
 
 	result.koChanceText = "every bit counts";
@@ -193,8 +186,8 @@ function setResultText(result, move, hitCount, moveAccuracy, koCombinations, dam
 	}
 
 	// remove burn and toxic text from OHKOs with orbs
-	if (hitCount == 1 && (isFlameOrb || (isToxicOrb && toxicCounter == 0))) {
-		removedText = isFlameOrb ? "burn" : "toxic";
+	if ((hitCount == 1 || hitCount == move.hits) && (flameOrbValue || (isToxicOrb && initialToxicCounter == 0))) {
+		removedText = flameOrbValue ? "burn" : "toxic";
 		for (let i = afterTextArr.length - 1; i >= 0; i--) {
 			let text = afterTextArr[i];
 			if (text.startsWith(removedText)) {
@@ -214,20 +207,18 @@ function setUpBerryValues(attacker, defender) {
 		return "";
 	}
 	if (defender.item === "Sitrus Berry") {
-		berryRecovery = Math.floor(gen == 3 ? 30 : (defender.maxHP / 4));
-		berryThreshold = Math.floor(defender.maxHP / 2);
+		berryRecovery = Math.floor(gen == 3 ? 30 : (defenderMaxHP / 4));
+		berryThreshold = Math.floor(defenderMaxHP / 2);
 	} else if (["Figy Berry", "Iapapa Berry", "Wiki Berry", "Aguav Berry", "Mago Berry"].includes(defender.item)) {
-		berryRecovery = Math.floor(defender.maxHP / (gen <= 6 ? 8 : (gen == 7 ? 2 : 3)));
-		berryThreshold = Math.floor(defender.maxHP / (defender.curAbility === "Gluttony" ? 2 : 4));
+		berryRecovery = Math.floor(defenderMaxHP / (gen <= 6 ? 8 : (gen == 7 ? 2 : 3)));
+		berryThreshold = Math.floor(defenderMaxHP / (defender.curAbility === "Gluttony" ? 2 : 4));
 	} else {
 		return "";
 	}
 
 	let berryText = defender.item + " recovery";
 	if (defender.curAbility === "Cheek Pouch") {
-		// suppose a hit damages a Cheek Pouch Sitrus user to 49%. Then it is healed to 100%, not 107% like this code is doing.
-		// this is difficult to accomodate with ranges across multiple hits, so I'm ignoring it right now.
-		berryRecovery += Math.floor(defender.maxHP / 3);
+		berryRecovery += Math.floor(defenderMaxHP / 3);
 		berryText = defender.curAbility + " " + berryText;
 	} else if (defender.curAbility === "Ripen") {
 		berryRecovery *= 2;
@@ -237,13 +228,13 @@ function setUpBerryValues(attacker, defender) {
 }
 
 // this function does a check on whether a multihit move can OHKO and bypass a healing berry.
-function checkMultiHitOHKO(moveHits, result, targetHP, attacker, defender, move, damageInfo, firstHitDamageInfo) {
+function checkMultiHitOHKO(moveHits, result, firstHitDamageInfo) {
 	if (moveHits == 1) {
 		return; // return nothing
 	}
 
 	let baseHitDamage = result.firstHitDamage ? result.firstHitDamage : result.damage;
-	if (baseHitDamage[0] >= targetHP) {
+	if (baseHitDamage[0] >= initialHP) {
 		return {
 			hitCount: 1,
 			koCombinations: GUARANTEED
@@ -254,30 +245,27 @@ function checkMultiHitOHKO(moveHits, result, targetHP, attacker, defender, move,
 		return; // easier to not deal with these types of damage in here right now.
 	}
 
-	let flameOrbOffset = defender.item === "Flame Orb" ? getBurnEOT(defender) : 0;
-	if (checkHPThreshold(targetHP + berryRecovery + flameOrbOffset, 0, firstHitDamageInfo.min, defender.maxHP)) {
+	if (checkHPThreshold(0, firstHitDamageInfo.min - berryRecovery, 1)) {
 		return {
 			hitCount: moveHits,
 			koCombinations: GUARANTEED,
 			berryKO: true,
-			printEOTText: firstHitDamageInfo.min < targetHP + berryRecovery // only print eot text if the min damage isn't OHKOing the defender
+			printEOTText: firstHitDamageInfo.min < initialHP + berryRecovery // only print eot text if the min damage isn't OHKOing the defender
 		};
 	}
 
 	let multiDamageInfo = DamageInfo(result, 1);
 	let multiFirstDamageInfo = result.firstHitDamage ? DamageInfo(result, 1, true) : multiDamageInfo;
-	// pass in a maxHP of 0 so that toxic damage doesn't get applied
-	let multiResult = calculateNHKO(moveHits, targetHP + flameOrbOffset, 0, multiDamageInfo, multiFirstDamageInfo, true);
 
+	let multiResult = calculateNHKO(moveHits, multiDamageInfo, multiFirstDamageInfo, true);
 	if (!multiResult) {
 		return;
 	}
-
 	multiResult.printEOTText = multiResult.koCombinations !== GUARANTEED;
 	return multiResult;
 }
 
-function calculateNHKO(upperHitCount, targetHP, maxHP, damageInfo, firstHitDamageInfo, isCheckMultihitOHKO = false) {
+function calculateNHKO(upperHitCount, damageInfo, firstHitDamageInfo, isCheckMultihitOHKO = false) {
 	// nHitDamageMap is the combined map of previous hits. So when checking the 3HKO, it contains all damage possibilities from 2 hits.
 	// It does not include any hits that proc'd berry nor accumulated eot. berryDamageMap is a counterpart that only contains hits that proc'd a berry (but did not KO)
 	let nHitDamageMap;
@@ -287,8 +275,8 @@ function calculateNHKO(upperHitCount, targetHP, maxHP, damageInfo, firstHitDamag
 	} else {
 		nHitDamageMap = new Map();
 		for (let [damageValue, count] of firstHitDamageInfo.damageMap) {
-			if (checkHPThreshold(targetHP, berryThreshold, damageValue, maxHP)) {
-				berryDamageMap.set(damageValue, count);
+			if (checkHPThreshold(berryThreshold, damageValue, 1)) {
+				berryDamageMap.set(damageValue - berryRecovery, count);
 			} else {
 				nHitDamageMap.set(damageValue, count);
 			}
@@ -300,19 +288,22 @@ function calculateNHKO(upperHitCount, targetHP, maxHP, damageInfo, firstHitDamag
 	let koCombinations = 0;
 	let berryKoCombinations = 0;
 	for (let hitCount = 2; hitCount <= upperHitCount; hitCount++) {
-		let isLastHit = hitCount == upperHitCount;
-		let calcMaxHits = isCheckMultihitOHKO && !isLastHit;
-		nextDamageMap = new Map();
-		nextBerryDamageMap = new Map();
-		let previousTurnsEot = isCheckMultihitOHKO ? 0 : (hitCount - 1) * eotTotal;
-
-		if (checkHPThreshold(targetHP + berryRecovery + previousTurnsEot, 0, firstHitDamageInfo.min + damageInfo.min * (hitCount - 1), maxHP)) {
+		let turnCount = isCheckMultihitOHKO ? 1 : hitCount;
+		let previousTurnsEot = accumulatedEOT(turnCount - 1);
+		// check for an outright guaranteed KO
+		if (checkHPThreshold(0, firstHitDamageInfo.min + damageInfo.min * (hitCount - 1) + previousTurnsEot - berryRecovery, turnCount)) {
 			return {
 				hitCount: hitCount,
 				koCombinations: GUARANTEED,
 				berryKO: berryDamageMap.size > 0 // if there is any possibility of berry activating, print berry text
 			};
 		}
+
+		let isLastHit = hitCount == upperHitCount;
+		let calcMaxHits = isCheckMultihitOHKO && !isLastHit;
+
+		nextDamageMap = new Map();
+		nextBerryDamageMap = new Map();
 
 		// nHitDamageMap and berryDamageMap include the first hit damage.
 		// loop through the values of "base damage", how much a single attack/turn deals
@@ -321,27 +312,28 @@ function calculateNHKO(upperHitCount, targetHP, maxHP, damageInfo, firstHitDamag
 			for (let [nHitValue, nHitCount] of nHitDamageMap) {
 				let damageTotal = baseValue + nHitValue;
 				let countTotal = baseCount * nHitCount;
+				let actualRecovery = Math.min(berryRecovery, defenderMaxHP - (initialHP - damageTotal + previousTurnsEot));
 				// checkHPThreshold() is not called here because it factors in eot, and this checks for KOs that did not proc a berry
 				// if it can only get the KO with eot, then berry would proc instead. nHitDamageMap only contains damages that didn't activate berry.
-				if (targetHP + previousTurnsEot <= damageTotal) {
+				if (initialHP + previousTurnsEot <= damageTotal) {
 					// a KO occurs
 					if (calcMaxHits) {
 						mapAddKey(nextDamageMap, damageTotal, countTotal);
 					} else {
 						koCombinations += countTotal;
 					}
-				} else if (checkHPThreshold(targetHP + berryRecovery + previousTurnsEot, 0, damageTotal, maxHP)) {
+				} else if (checkHPThreshold(0, damageTotal - actualRecovery, turnCount)) {
 					// a KO occurs and a berry was eaten
 					if (calcMaxHits) {
-						mapAddKey(nextBerryDamageMap, damageTotal, countTotal);
+						mapAddKey(nextBerryDamageMap, damageTotal - actualRecovery, countTotal);
 					} else {
 						berryKoCombinations += countTotal;
 					}
 				} else if (!calcMaxHits && (koCombinations || berryKoCombinations || isLastHit)) {
 					// skip the following branches if the loop will be ending
-				} else if (berryRecovery && checkHPThreshold(targetHP + previousTurnsEot, berryThreshold, damageTotal, maxHP)) {
+				} else if (berryRecovery && checkHPThreshold(berryThreshold, damageTotal, turnCount)) {
 					// no KO occurs and a berry was eaten
-					mapAddKey(nextBerryDamageMap, damageTotal, countTotal);
+					mapAddKey(nextBerryDamageMap, damageTotal - actualRecovery, countTotal);
 				} else {
 					// no KO occured, but a berry wasn't eaten (either it wasn't eaten or no berry is held)
 					mapAddKey(nextDamageMap, damageTotal, countTotal);
@@ -351,7 +343,7 @@ function calculateNHKO(upperHitCount, targetHP, maxHP, damageInfo, firstHitDamag
 			for (let [berryValue, berryCount] of berryDamageMap) {
 				let damageTotal = baseValue + berryValue;
 				let countTotal = baseCount * berryCount;
-				if (checkHPThreshold(targetHP + berryRecovery + previousTurnsEot, 0, damageTotal, maxHP)) {
+				if (checkHPThreshold(0, damageTotal, turnCount)) {
 					// a KO occurs
 					if (calcMaxHits) {
 						mapAddKey(nextBerryDamageMap, damageTotal, countTotal);
@@ -371,36 +363,39 @@ function calculateNHKO(upperHitCount, targetHP, maxHP, damageInfo, firstHitDamag
 		// However if calcing a multihit OHKO, allow all strikes to be factored in
 		if ((koCombinations || berryKoCombinations) && !calcMaxHits) {
 			return {
-				hitCount: hitCount,
-				koCombinations: koCombinations + berryKoCombinations,
-				berryKO: berryKoCombinations > 0
+				"hitCount": hitCount,
+				"koCombinations": koCombinations + berryKoCombinations,
+				"berryKO": berryKoCombinations > 0
 			};
 		}
 
 		nHitDamageMap = nextDamageMap;
 		berryDamageMap = nextBerryDamageMap;
-		if (!isCheckMultihitOHKO) {
-			incrementToxicCounter();
-		}
 	}
 	// return nothing if no KO was found.
 }
 
-function incrementToxicCounter() {
-	if (toxicCounter || isToxicOrb) {
-		toxicCounter = Math.min(toxicCounter + 1, 16);
+function accumulatedEOT(turnCount) {
+	// correct for 1 turn of burn that was applied via Flame Orb
+	if (turnCount <= 0) {
+		return flameOrbValue;
 	}
+	return (turnCount * eotTotal) - toxicSum(turnCount) + flameOrbValue;
 }
 
-function toxicSum(counter, maxHP) {
-	if (counter <= 0) {
-		return 0;
-	}
+function toxicSum(turnCount) {
 	let sum = 0;
-	for (let i = counter; i > 0; i--) {
-		sum += Math.floor(maxHP * counter / 16);
+	for (let turn = 1; turn <= turnCount; turn++) {
+		sum += toxicDamageInstance(turn);
 	}
 	return sum;
+}
+
+function toxicDamageInstance(turnCount) {
+	if (initialToxicCounter == null || turnCount <= 0) {
+		return 0;
+	}
+	return Math.floor(defenderMaxHP * (initialToxicCounter + turnCount - 1) / 16);
 }
 
 function powerDivision(numerator, divisor, power) {
@@ -415,25 +410,23 @@ function powerDivision(numerator, divisor, power) {
 
 // This is used to check if a damage value will cause the current HP to meet a threshold, factoring in eot.
 // This is used to either check KOs or berry activations.
-function checkHPThreshold(currentHP, threshold, damageValue, maxHP) {
-	// this function assumes that currentHP includes any berry recovery and all accumulated eot of prior turns*. This turn's eot is accounted for here.
-	// *except for toxic damage.
-	// weather and weather abilities activate first, so check if the weather causes a KO.
+function checkHPThreshold(threshold, damageValue, turnCount) {
+	let damagedHP = initialHP - damageValue + accumulatedEOT(turnCount - 1);
+	// weather and weather abilities activate first, so check if the weather causes the threshold to be met.
 	// otherwise for simplicity, assume all the eot occurs at one time and check against that.
-	let damagedHP = currentHP - damageValue - toxicSum(toxicCounter - 1, maxHP);
 	return damagedHP <= threshold ||
 		damagedHP + eotWeather <= threshold ||
-		damagedHP + eotTotal - Math.floor(maxHP * toxicCounter / 16) <= threshold;
+		damagedHP + eotTotal - toxicDamageInstance(turnCount) <= threshold;
 }
 
 function calcHazards(defender, field, hazardText) {
 	let hazards = 0;
 	if (field.isBusted8) {
-		hazards -= Math.floor(defender.maxHP / 8);
+		hazards -= Math.floor(defenderMaxHP / 8);
 		hazardText.push("1/8th Disguise damage");
 	}
 	if (field.isBusted16) {
-		hazards -= Math.floor(defender.maxHP / 16);
+		hazards -= Math.floor(defenderMaxHP / 16);
 		hazardText.push("1/16th Disguise damage");
 	}
 	// Exit early if the defender isn't affected by SR/Spikes
@@ -442,7 +435,7 @@ function calcHazards(defender, field, hazardText) {
 	}
 	if (field.isSR) {
 		let effectiveness = typeChart["Rock"][defender.type1] * (defender.type2 ? typeChart["Rock"][defender.type2] : 1);
-		hazards -= Math.floor(effectiveness * defender.maxHP / 8);
+		hazards -= Math.floor(effectiveness * defenderMaxHP / 8);
 		hazardText.push("Stealth Rock");
 	}
 	// Exit early if the defender isn't grounded
@@ -450,17 +443,17 @@ function calcHazards(defender, field, hazardText) {
 		return hazards;
 	}
 	if (field.spikes === 1) {
-		hazards -= Math.floor(defender.maxHP / 8);
+		hazards -= Math.floor(defenderMaxHP / 8);
 		if (gen === 2) {
 			hazardText.push("Spikes");
 		} else {
 			hazardText.push("1 layer of Spikes");
 		}
 	} else if (field.spikes === 2) {
-		hazards -= Math.floor(defender.maxHP / 6);
+		hazards -= Math.floor(defenderMaxHP / 6);
 		hazardText.push("2 layers of Spikes");
 	} else if (field.spikes === 3) {
-		hazards -= Math.floor(defender.maxHP / 4);
+		hazards -= Math.floor(defenderMaxHP / 4);
 		hazardText.push("3 layers of Spikes");
 	}
 	if (isNaN(hazards)) {
@@ -476,7 +469,7 @@ function calcWeatherEOT(defender, effectiveDefenderItem, field, eotText, eotHeal
 		return 0;
 	}
 	// this effectively hardcodes a dynamax level of 10 and there's not enough reason to fix this
-	let effectiveMaxHP = defender.isDynamax ? defender.maxHP / 2 : defender.maxHP;
+	let effectiveMaxHP = defender.isDynamax ? defenderMaxHP / 2 : defenderMaxHP;
 
 	if (field.weather.includes("Sun") && ["Dry Skin", "Solar Power"].includes(defender.curAbility)) {
 		eotText.push(defender.curAbility + " damage");
@@ -511,9 +504,10 @@ function calcWeatherEOT(defender, effectiveDefenderItem, field, eotText, eotHeal
 }
 
 function calcOtherEOT(attacker, defender, effectiveDefenderItem, field, eotText, eotHealingText) {
+	initialToxicCounter = null;
 	let eot = 0;
 	// this effectively hardcodes a dynamax level of 10 and there's not enough reason to fix this
-	let effectiveMaxHP = defender.isDynamax ? defender.maxHP / 2 : defender.maxHP;
+	let effectiveMaxHP = defender.isDynamax ? defenderMaxHP / 2 : defenderMaxHP;
 	if (effectiveDefenderItem === "Leftovers") {
 		eot += Math.floor(effectiveMaxHP / 16);
 		eotHealingText.push("Leftovers recovery");
@@ -537,31 +531,27 @@ function calcOtherEOT(attacker, defender, effectiveDefenderItem, field, eotText,
 		eotHealingText.push("Grassy Terrain recovery");
 	}
 
-	toxicCounter = 0;
-	if (defender.status === "Poisoned") {
-		if (defender.curAbility === "Poison Heal") {
-			eot += Math.floor(effectiveMaxHP / 8);
-			eotHealingText.push("Poison Heal");
-		} else if (defender.curAbility !== "Magic Guard") {
-			eot -= Math.floor(effectiveMaxHP / 8);
-			eotText.push("poison damage");
-		}
+	if (defender.curAbility === "Magic Guard") {
+		return eot;
+	}
+
+	if (defender.status.endsWith("Poisoned") && defender.curAbility === "Poison Heal") {
+		eot += Math.floor(effectiveMaxHP / 8);
+		eotHealingText.push("Poison Heal");
+	} else if (defender.status === "Poisoned") {
+		eot -= Math.floor(effectiveMaxHP / 8);
+		eotText.push("poison damage");
 	} else if (defender.status === "Badly Poisoned") {
-		if (defender.curAbility === "Poison Heal") {
-			eot += Math.floor(effectiveMaxHP / 8);
-			eotHealingText.push("Poison Heal");
-		} else if (defender.curAbility !== "Magic Guard") {
-			eotText.push("toxic damage");
-			toxicCounter = defender.toxicCounter;
-		}
-	} else if (defender.status === "Burned" && defender.curAbility !== "Magic Guard") {
+		initialToxicCounter = defender.toxicCounter;
+		eotText.push("toxic damage");
+	} else if (defender.status === "Burned") {
 		let text = "burn damage";
 		if (defender.curAbility === "Heatproof") {
 			text = defender.curAbility + " " + text;
 		}
 		eot -= getBurnEOT(defender);
 		eotText.push(text);
-	} else if (defender.status === "Asleep" && attacker.curAbility === "Bad Dreams" && defender.curAbility !== "Magic Guard") {
+	} else if (defender.status === "Asleep" && attacker.curAbility === "Bad Dreams") {
 		eot -= Math.floor(effectiveMaxHP / 8);
 		eotText.push("Bad Dreams");
 	}
@@ -571,7 +561,6 @@ function calcOtherEOT(attacker, defender, effectiveDefenderItem, field, eotText,
 
 // returns the absolute value of burn damage; e.g. 0 or a positive value
 function getBurnEOT(pokemon) {
-	let effectiveMaxHP = pokemon.isDynamax ? pokemon.maxHP / 2 : pokemon.maxHP;
 	if (pokemon.status !== "Burned" || pokemon.curAbility === "Magic Guard") {
 		return 0;
 	}
@@ -579,7 +568,7 @@ function getBurnEOT(pokemon) {
 	if (pokemon.curAbility === "Heatproof") {
 		divisor *= 2;
 	}
-	return Math.floor(effectiveMaxHP / divisor);
+	return Math.floor((pokemon.isDynamax ? pokemon.maxHP / 2 : pokemon.maxHP) / divisor);
 }
 
 function defenderHasItem(moveName, attackerItem) {
