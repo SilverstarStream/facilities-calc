@@ -264,7 +264,8 @@ function getDamageResult(attacker, defender, move, field) {
 	let otherHitsTypeEffectiveness = typeEffectiveness; // save the original type effectiveness for calculating non-first hits
 	if (isTeraShell(defender, typeEffectiveness)) {
 		typeEffectiveness = 0.5;
-		description.defenderAbility = defender.curAbility + getFirstHitText(ATTACK_TEXT, move.hits);
+		description.defenderAbility = defender.curAbility;
+		description.defenderAbilityFirstHit = getFirstHitText(ATTACK_TEXT, move.hits);
 	}
 
 	if (typeEffectiveness === 0) {
@@ -636,7 +637,8 @@ function calcBP(attacker, defender, move, field, description, ateizeBoost) {
 		description.attackerItem = attacker.item;
 	} else if (isFirstHit && applyGem(attacker, move)) {
 		bpMods.push(gen >= 6 ? 0x14CD : 0x1800);
-		description.attackerItem = attacker.item + getFirstHitText(ATTACK_TEXT, move.hits);
+		description.attackerItem = attacker.item;
+		description.attackerItemFirstHit = getFirstHitText(ATTACK_TEXT, move.hits);
 	}
 
 	if (["Solar Beam", "SolarBeam", "Solar Blade"].includes(move.name) &&
@@ -993,7 +995,8 @@ function calcFinalMods(attacker, defender, move, field, description, typeEffecti
 		defender.curAbility === "Punk Rock" && move.isSound ||
 		defender.curAbility === "Ice Scales" && moveCategory === "Special") {
 		finalMods.push(0x800);
-		description.defenderAbility = defender.ability + getFirstHitText(STRIKE_TEXT, move.hits);
+		description.defenderAbility = defender.ability;
+		description.defenderAbilityFirstHit = getFirstHitText(STRIKE_TEXT, move.hits);
 	}
 	if (field.isFriendGuard) {
 		finalMods.push(0xC00);
@@ -1014,14 +1017,15 @@ function calcFinalMods(attacker, defender, move, field, description, typeEffecti
 		finalMods.push(0x14CC);
 		description.attackerItem = attacker.item;
 	}
-	if (isFirstHit && activateResistBerry(attacker, defender, typeEffectiveness)) {
+	if (isFirstHit && activateResistBerry(attacker, defender.item, typeEffectiveness)) {
 		if (defender.curAbility === "Ripen") {
 			finalMods.push(0x400);
 			description.defenderAbility = defender.curAbility;
 		} else {
 			finalMods.push(0x800);
 		}
-		description.defenderItem = defender.item + getFirstHitText(STRIKE_TEXT, move.hits);
+		description.defenderItem = defender.item;
+		description.defenderItemFirstHit = getFirstHitText(STRIKE_TEXT, move.hits);
 	}
 	if (field.isMinimized && (["Astonish", "Body Slam", "Dragon Rush", "Extrasensory", "Flying Press", "Heat Crash", "Heavy Slam", "Malicious Moonsault", "Needle Arm", "Phantom Force", "Shadow Force", "Steamroller", "Stomp"].includes(move.name))) {
 		finalMods.push(0x2000);
@@ -1106,7 +1110,7 @@ function recalcOtherHits(attacker, defender, move, field, description, result,
 		isFirstHit = false;
 		defender.item = "";
 		if (description.defenderItem) {
-			description.defenderItem += getFirstHitText(STRIKE_TEXT, move.hits);
+			description.defenderItemFirstHit = getFirstHitText(STRIKE_TEXT, move.hits);
 		}
 		defense = calcDef(attacker, defender, move, field, {});
 	}
@@ -1126,7 +1130,7 @@ function recalcOtherHits(attacker, defender, move, field, description, result,
 
 	// recalc final mods
 	if (recalcFinalMod ||
-		activateResistBerry(attacker, defender, typeEffectiveness) ||
+		activateResistBerry(attacker, originalDefenderItem, typeEffectiveness) ||
 		(["Multiscale"].includes(defender.curAbility) || (defender.ability == "Shadow Shield" && !isNeutralizingGas)) && defender.curHP === defender.maxHP) {
 		isFirstHit = false;
 		finalMod = calcFinalMods(attacker, defender, move, field, {}, otherHitsTypeEffectiveness, bypassProtect);
@@ -1229,6 +1233,7 @@ function buildDescription(description) {
 	}
 	output = appendIfSet(output, description.attackEVs);
 	output = appendIfSet(output, description.attackerItem);
+	output = appendIfSet(output, description.attackerItemFirstHit);
 	output = appendIfSet(output, description.attackerAbility);
 	if (description.isRuinAtk) {
 		output += "Ruin ";
@@ -1285,7 +1290,9 @@ function buildDescription(description) {
 		output += "/ " + description.defenseEVs + " ";
 	}
 	output = appendIfSet(output, description.defenderItem);
+	output = appendIfSet(output, description.defenderItemFirstHit);
 	output = appendIfSet(output, description.defenderAbility);
+	output = appendIfSet(output, description.defenderAbilityFirstHit);
 	if (description.isMinimized) {
 		output += "Minimized ";
 	}
@@ -1561,8 +1568,8 @@ function getSingletonDamage(attacker, defender, move, field, description) {
 	return singletonDamageValue;
 }
 
-function activateResistBerry(attacker, defender, typeEffectiveness) {
-	return getBerryResistType(defender.item) === moveType && (typeEffectiveness > 1 || moveType === "Normal") && attacker.curAbility !== "Unnerve" && attacker.ability !== "As One";
+function activateResistBerry(attacker, defenderItem, typeEffectiveness) {
+	return getBerryResistType(defenderItem) === moveType && (typeEffectiveness > 1 || moveType === "Normal") && attacker.curAbility !== "Unnerve" && attacker.ability !== "As One";
 }
 
 function checkAirLock(pokemon, field) {
