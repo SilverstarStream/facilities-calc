@@ -162,8 +162,8 @@ function getDamageResultPtHGSS(attacker, defender, move, field) {
 		break;
 	case "Flail":
 	case "Reversal":
-		var p = Math.floor(48 * attacker.curHP / attacker.maxHP);
-		basePower = p <= 1 ? 200 : p <= 4 ? 150 : p <= 9 ? 100 : p <= 16 ? 80 : p <= 32 ? 40 : 20;
+		var p = Math.floor(64 * attacker.curHP / attacker.maxHP);
+		basePower = p <= 1 ? 200 : p <= 5 ? 150 : p <= 12 ? 100 : p <= 21 ? 80 : p <= 42 ? 40 : 20;
 		description.moveBP = basePower;
 		break;
 	case "Fling":
