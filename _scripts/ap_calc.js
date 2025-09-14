@@ -375,6 +375,10 @@ function setUpRecoilRecoveryText(result, attacker, defender, move, minDamage, ma
 		minHealthRecovered += Math.max(Math.floor(Math.min(minDamage, defCurHP) / 8), 1); // this should always floor
 		maxHealthRecovered += Math.max(Math.floor(Math.min(maxDamage, defCurHP) / 8), 1);
 	}
+	if (move.name === "Strength Sap" && (defender.curAbility === "Contrary" ? defender.boosts[AT] > -6 : defender.boosts[AT] < 6)) {
+		minHealthRecovered = defender.stats[AT];
+		maxHealthRecovered = minHealthRecovered;
+	}
 	if (minHealthRecovered) {
 		result.recoveryRange = minHealthRecovered;
 		result.recoveryPercent = Math.round(minHealthRecovered * 1000 / atkMaxHP) / 10;
