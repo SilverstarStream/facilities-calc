@@ -1702,7 +1702,7 @@ var calcStat = CALC_STAT_ADV;
 $(".game").change(function () {
 	gameId = ~~$(this).val();
 	let gameGen = GAME_GENS[gameId];
-	gen = gameGen.gen ? gameGen.gen : gameId;
+	gen = gameGen && gameGen.gen ? gameGen.gen : gameId;
 	localStorage.setItem(LOCAL_SELECTED_GAME_KEY, gameId);
 
 	setGenProperties();
