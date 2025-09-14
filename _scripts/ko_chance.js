@@ -395,7 +395,7 @@ function toxicDamageInstance(turnCount) {
 	if (initialToxicCounter == null || turnCount <= 0) {
 		return 0;
 	}
-	return Math.floor(defenderMaxHP * (initialToxicCounter + turnCount - 1) / 16);
+	return Math.floor(defenderMaxHP / 16) * (initialToxicCounter + turnCount - 1);
 }
 
 function powerDivision(numerator, divisor, power) {
