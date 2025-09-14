@@ -206,11 +206,13 @@ function setUpBerryValues(attacker, defender) {
 	if (attacker.curAbility === "Unnerve" || attacker.ability === "As One") {
 		return "";
 	}
+	// this effectively hardcodes a dynamax level of 10 and there's not enough reason to fix this
+	let effectiveMaxHP = defender.isDynamax ? defenderMaxHP / 2 : defenderMaxHP;
 	if (defender.item === "Sitrus Berry") {
-		berryRecovery = Math.floor(gen == 3 ? 30 : (defenderMaxHP / 4));
+		berryRecovery = Math.floor(gen == 3 ? 30 : (effectiveMaxHP / 4));
 		berryThreshold = Math.floor(defenderMaxHP / 2);
 	} else if (["Figy Berry", "Iapapa Berry", "Wiki Berry", "Aguav Berry", "Mago Berry"].includes(defender.item)) {
-		berryRecovery = Math.floor(defenderMaxHP / (gen <= 6 ? 8 : (gen == 7 ? 2 : 3)));
+		berryRecovery = Math.floor(effectiveMaxHP / (gen <= 6 ? 8 : (gen == 7 ? 2 : 3)));
 		berryThreshold = Math.floor(defenderMaxHP / (defender.curAbility === "Gluttony" ? 2 : 4));
 	} else {
 		return "";
@@ -218,7 +220,7 @@ function setUpBerryValues(attacker, defender) {
 
 	let berryText = defender.item + " recovery";
 	if (defender.curAbility === "Cheek Pouch") {
-		berryRecovery += Math.floor(defenderMaxHP / 3);
+		berryRecovery += Math.floor(effectiveMaxHP / 3);
 		berryText = defender.curAbility + " " + berryText;
 	} else if (defender.curAbility === "Ripen") {
 		berryRecovery *= 2;
