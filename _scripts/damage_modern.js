@@ -1533,14 +1533,15 @@ function getSingletonDamage(attacker, defender, move, field, description) {
 		return singletonDamageValue *= 2;
 	}
 
+	let effectiveCurHP = defender.isDynamax ? Math.floor(defender.curHP / 2) : defender.curHP;
 	switch (move.name) {
 		case "Super Fang":
 		case "Nature\'s Madness":
 		case "Ruination":
-			singletonDamageValue = Math.max(Math.floor(defender.curHP / 2), 1);
+			singletonDamageValue = Math.max(Math.floor(effectiveCurHP / 2), 1);
 			break;
 		case "Guardian of Alola":
-			singletonDamageValue = Math.max(Math.floor(defender.curHP * 3 / 4), 1);
+			singletonDamageValue = Math.max(Math.floor(effectiveCurHP * 3 / 4), 1);
 			if (field.isProtect) {
 				singletonDamageValue = Math.max(Math.floor(singletonDamageValue / 4), 1);
 				description.isQuarteredByProtect = true;
