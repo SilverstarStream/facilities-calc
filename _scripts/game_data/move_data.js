@@ -1791,25 +1791,29 @@ var MOVES_ADV = $.extend(true, {}, MOVES_GSC, {
 		"bp": 1,
 		"type": "Ice",
 		"category": "Special",
-		"acc": 30
+		"acc": 30,
+		"isMLG": true
 	},
 	"Fissure": {
 		"bp": 1,
 		"type": "Ground",
 		"category": "Physical",
-		"acc": 30
+		"acc": 30,
+		"isMLG": true
 	},
 	"Horn Drill": {
 		"bp": 1,
 		"type": "Normal",
 		"category": "Physical",
-		"acc": 30
+		"acc": 30,
+		"isMLG": true
 	},
 	"Guillotine": {
 		"bp": 1,
 		"type": "Normal",
 		"category": "Physical",
-		"acc": 30
+		"acc": 30,
+		"isMLG": true
 	},
 	"Shock Wave": {
 		"bp": 60,
@@ -4210,20 +4214,16 @@ var MOVES_SM = $.extend(true, {}, MOVES_XY, {
 	},
 	"Shadow Punch": {"zp": 120},
 	"Sheer Cold": {
-		"zp": 180,
-		"isMLG": true
+		"zp": 180
 	},
 	"Fissure": {
-		"zp": 180,
-		"isMLG": true
+		"zp": 180
 	},
 	"Horn Drill": {
-		"zp": 180,
-		"isMLG": true
+		"zp": 180
 	},
 	"Guillotine": {
-		"zp": 180,
-		"isMLG": true
+		"zp": 180
 	},
 	"Shell Trap": {
 		"bp": 150,

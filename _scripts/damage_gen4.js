@@ -113,11 +113,12 @@ function getDamageResultPtHGSS(attacker, defender, move, field) {
 		return {"damage": [0], "description": buildDescription(description)};
 	}
 	if ((defender.curAbility === "Wonder Guard" && typeEffectiveness <= 1 && !["Struggle", "Beat Up", "Future Sight", "Doom Desire", "Fire Fang"].includes(move.name)) ||
-            (moveType === "Fire" && defender.curAbility === "Flash Fire") ||
-            (moveType === "Water" && ["Dry Skin", "Water Absorb"].indexOf(defender.curAbility) !== -1) ||
-            (moveType === "Electric" && ["Motor Drive", "Volt Absorb"].indexOf(defender.curAbility) !== -1) ||
-            (moveType === "Ground" && defender.curAbility === "Levitate" && !isGrounded(defender, field)) ||
-            (move.isSound && defender.curAbility === "Soundproof")) {
+		(moveType === "Fire" && defender.curAbility === "Flash Fire") ||
+		(moveType === "Water" && ["Dry Skin", "Water Absorb"].indexOf(defender.curAbility) !== -1) ||
+		(moveType === "Electric" && ["Motor Drive", "Volt Absorb"].indexOf(defender.curAbility) !== -1) ||
+		(moveType === "Ground" && defender.curAbility === "Levitate" && !isGrounded(defender, field)) ||
+		(move.isSound && defender.curAbility === "Soundproof") ||
+		(move.isMLG && defender.curAbility === "Sturdy")) {
 		description.defenderAbility = defender.curAbility;
 		return {"damage": [0], "description": buildDescription(description)};
 	}

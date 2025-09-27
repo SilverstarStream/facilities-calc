@@ -280,7 +280,8 @@ function getDamageResult(attacker, defender, move, field) {
 		moveType === "Ground" && defender.curAbility === "Earth Eater" ||
 		move.isBullet && defender.curAbility === "Bulletproof" ||
 		move.isSound && defender.curAbility === "Soundproof" ||
-		move.isWind && defender.curAbility === "Wind Rider") {
+		move.isWind && defender.curAbility === "Wind Rider" ||
+		move.isMLG && defender.curAbility === "Sturdy") {
 		description.defenderAbility = defender.curAbility;
 		return {"damage": [0], "description": buildDescription(description)};
 	}
