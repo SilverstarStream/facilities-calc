@@ -195,7 +195,7 @@ function setDamageText(result, attacker, defender, move, fieldSide, resultLocati
 	result.damageText = firstHitDamageInfo.min + "-" + firstHitDamageInfo.max + " (" + minPercent + " - " + maxPercent + "%)";
 	if (move.bp === 0) {
 		result.koChanceText = "nice move";
-	} else if (move.isMLG) {
+	} else if (move.isMLG && firstHitDamageInfo.min != 0) {
 		result.koChanceText = "<a href = 'https://www.youtube.com/watch?v=iD92h-M474g'>it's a one-hit KO!</a>";
 	} else if (move.noKOChance) {
 		result.koChanceText = "";
@@ -270,14 +270,14 @@ function setUpRecoilRecoveryText(result, attacker, defender, move, minDamage, ma
 	let defCurHP = defender.curHP;
 	let defMaxHP = defender.maxHP;
 	// percentage-based recoil and healing use normal rounding for their final value in gens 5+.
-	let roundFunc = gen <= 4 ? x => Math.floor(x) : x => Math.round(x);
+	let roundFunction = gen <= 4 ? x => Math.floor(x) : x => Math.round(x);
 	if (attacker.ability === "Magic Guard" && !isNeutralizingGas) {
 		// no recoil
 	} else if (typeof move.hasRecoil === "number" && minDamage > 0 && (attacker.ability !== "Rock Head" || isNeutralizingGas)) {
 		result.recoilType = "recoil";
 		// Parental Bond adds the damage values into a total and then applies the recoil value, so this is fine
-		minRecoilDamage = Math.max(roundFunc(Math.min(minDamage, defCurHP) * move.hasRecoil), 1);
-		maxRecoilDamage = Math.max(roundFunc(Math.min(maxDamage, defCurHP) * move.hasRecoil), 1);
+		minRecoilDamage = Math.max(roundFunction(Math.min(minDamage, defCurHP) * move.hasRecoil), 1);
+		maxRecoilDamage = Math.max(roundFunction(Math.min(maxDamage, defCurHP) * move.hasRecoil), 1);
 		result.recoilRange = minRecoilDamage;
 		result.recoilPercent = Math.round(minRecoilDamage * 1000 / atkMaxHP) / 10;
 		if (minRecoilDamage != maxRecoilDamage) {
@@ -302,7 +302,7 @@ function setUpRecoilRecoveryText(result, attacker, defender, move, minDamage, ma
 		}
 	} else if (move.hasRecoil === "Struggle" && minDamage > 0) { // in gen 3 Struggle's recoil is percentage-based
 		result.recoilType = move.hasRecoil;
-		result.recoilRange = Math.max(roundFunc(atkMaxHP / 4), 1);
+		result.recoilRange = Math.max(roundFunction(atkMaxHP / 4), 1);
 		result.recoilPercent = Math.round(result.recoilRange * 1000 / atkMaxHP) / 10;
 	} else if (move.hasRecoil === true) { // checking for strict equality to true is necessary here
 		// currently if a move has its hasRecoil property simply set to true instead of a string or a number, it means it damages the user for 50% max HP
@@ -329,12 +329,7 @@ function setUpRecoilRecoveryText(result, attacker, defender, move, minDamage, ma
 				minHealthRecovered = Math.round(minParentDamage * healingMultiplier) + Math.round(Math.min(minChildDamage, defCurHP - minParentDamage) * healingMultiplier);
 			}
 			// get max recovery
-			if (defCurHP % 2 == 1) {
-				maxHealthRecovered = Math.round(Math.min(maxParentDamage, defCurHP) * healingMultiplier);
-				if (maxParentDamage < defCurHP) {
-					maxHealthRecovered += Math.round(Math.min(maxChildDamage, defCurHP - maxParentDamage) * healingMultiplier);
-				}
-			} else {
+			if (defCurHP % 2 == 0) {
 				// edge case where hitting optimal damage rolls to KO an even-HP defender maximizes recovery due to recovery values using normal rounding
 				let highestOddParent = maxParentDamage;
 				for (let i = result.damage.length - 2; highestOddParent % 2 == 1 && i >= 0; i--) {
@@ -346,10 +341,15 @@ function setUpRecoilRecoveryText(result, attacker, defender, move, minDamage, ma
 					maxHealthRecovered = Math.round(Math.min(maxParentDamage, defCurHP) * healingMultiplier) +
 					Math.round(Math.min(maxChildDamage, defCurHP - maxParentDamage) * healingMultiplier);
 				}
+			} else {
+				maxHealthRecovered = Math.round(Math.min(maxParentDamage, defCurHP) * healingMultiplier);
+				if (maxParentDamage < defCurHP) {
+					maxHealthRecovered += Math.round(Math.min(maxChildDamage, defCurHP - maxParentDamage) * healingMultiplier);
+				}
 			}
 		} else {
-			minHealthRecovered = roundFunc(Math.min(minDamage, defCurHP) * healingMultiplier);
-			maxHealthRecovered = roundFunc(Math.min(maxDamage, defCurHP) * healingMultiplier);
+			minHealthRecovered = roundFunction(Math.min(minDamage, defCurHP) * healingMultiplier);
+			maxHealthRecovered = roundFunction(Math.min(maxDamage, defCurHP) * healingMultiplier);
 		}
 
 		if (minDamage > 0) {

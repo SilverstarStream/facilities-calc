@@ -997,10 +997,11 @@ function setSelectValueIfValid(select, value, fallback) {
 }
 
 $(".forme").change(function () {
-	var altForme = pokedex[$(this).val()],
-		container = $(this).closest(".info-group").siblings(),
-		fullSetName = container.find(".select2-chosen").first().text(),
-		pokemonName = fullSetName.substring(0, fullSetName.indexOf(" ("));
+	let formeName = $(this).val();
+	let altForme = pokedex[formeName];
+	let container = $(this).closest(".info-group").siblings();
+	let fullSetName = container.find(".select2-chosen").first().text();
+	let pokemonName = fullSetName.substring(0, fullSetName.indexOf(" ("));
 	let setName = fullSetName.substring(fullSetName.indexOf("(") + 1, fullSetName.lastIndexOf(")"));
 
 	if (gen != 9 || !$(this).closest(".poke-info").find(".tera").prop("checked")) {
@@ -1009,40 +1010,42 @@ $(".forme").change(function () {
 	}
 	$(this).parent().siblings().find(".weight").val(altForme.w);
 
-	for (var i = 0; i < STATS.length; i++) {
-		var baseStat = container.find("." + STATS[i]).find(".base");
+	for (let i = 0; i < STATS.length; i++) {
+		let baseStat = container.find("." + STATS[i]).find(".base");
 		baseStat.val(altForme.bs[STATS[i]]);
-		var altHP = container.find(".hp .base").val(altForme.bs.hp);
-		altHP.keyup();
+		container.find(".hp .base").val(altForme.bs.hp).keyup();
 		baseStat.keyup();
 	}
 
-	var abilityList = altForme.abilities;
+	let abilityList = altForme.abilities;
 	prependSpeciesAbilities(abilityList, container.parent().parent().prop("id"), container.find(".ability"));
 
-	if (pokemonName && setdexAll && setdexAll[pokemonName] && setdexAll[pokemonName][setName] &&
-		setName !== BLANK_SET && abilities.includes(setdexAll[pokemonName][setName].ability)) {
+	if (setName !== BLANK_SET && pokemonName && setdexAll && setdexAll[pokemonName] && setdexAll[pokemonName][setName] &&
+		abilityList.includes(setdexAll[pokemonName][setName].ability)) {
+		// this pokemon comes from a defined set and the set specifies an ability
 		container.find(".ability").val(setdexAll[pokemonName][setName].ability);
 	} else if (abilityList && abilityList.length == 1) {
+		// the forme only has one ability
 		container.find(".ability").val(abilityList[0]);
 	} else if (abilities.includes(altForme.ab)) {
+		// the pokedex specifies an ability for the forme
 		container.find(".ability").val(altForme.ab);
 	} else {
 		container.find(".ability").val("");
 	}
 	container.find(".ability").change();
 
-	if ($(this).val().indexOf("Mega") === 0 && $(this).val() !== "Mega Rayquaza") {
+	if (formeName.includes("Mega") && !formeName.includes("Rayquaza")) {
 		container.find(".item").val("").keyup();
 		//container.find(".item").prop("disabled", true);
 		//edited out by squirrelboy1225 for doubles!
-	} else {
+	}/* else {
 		container.find(".item").prop("disabled", false);
-	}
+	}*/
 
-	if (pokemonName === "Darmanitan") {
-		container.find(".percent-hp").val($(this).val() === "Darmanitan-Z" ? "50" : "100").keyup();
-	}
+	/*if (pokemonName.includes("Darmanitan")) {
+		container.find(".percent-hp").val(formeName.includes("Darmanitan-Zen") ? "50" : "100").keyup();
+	}*/
 	// This is where we would make Zygarde's Forme change @50% HP, need to define var formeName
 	// if (pokemonName === "Zygarde" && (formeName === "Zygarde-10%" || formeName === "Zygarde")) {
 	//    container.find(".percent-hp").val($(this).val() === "Zygarde-Complete" ? "50" : "100").keyup();
