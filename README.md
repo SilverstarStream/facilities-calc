@@ -1,6 +1,6 @@
 # BATTLE FACILITIES DAMAGE CALCULATOR // SV EDITION
 
-By [Eisenherz](https://www.smogon.com/forums/members/eisenherz.326390/) & SilverstarStream, based on the BSS damage calculator by cant say ([@jakecantsay](https://twitter.com/jakecantsay)) and [Lego](https://www.smogon.com/forums/members/188833/).
+By [Eisenherz](https://www.smogon.com/forums/members/eisenherz.326390/) & SilverstarStream, based on the [BSS damage calculator](http://cantsay.github.io/) by cant say ([@jakecantsay](https://twitter.com/jakecantsay)) and [Lego](https://www.smogon.com/forums/members/188833/).
 
 The calculator includes all BDSP Tower / SwSh Tower / Restricted Sparring / Battle Tree / Battle Maison / Battle Subway / Sinnoh Battle Frontier / Hoenn Battle Frontier sets preloaded and has been updated for SV.
 
