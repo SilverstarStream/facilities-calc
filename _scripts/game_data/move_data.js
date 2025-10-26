@@ -344,6 +344,13 @@ var MOVES_RBY = {
 		"hasRecoil": "crash",
 		"acc": 95
 	},
+	"Karate Chop": {
+		"bp": 50,
+		"type": "Fighting",
+		"category": "Physical",
+		"makesContact": true,
+		"acc": 100
+	},
 	"Leech Life": {
 		"bp": 20,
 		"type": "Bug",
