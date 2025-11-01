@@ -403,6 +403,13 @@ var MOVES_RBY = {
 		"makesContact": true,
 		"acc": 75
 	},
+	"Mega Punch": {
+		"bp": 80,
+		"type": "Normal",
+		"category": "Physical",
+		"makesContact": true,
+		"acc": 85
+	},
 	"Mimic": {
 		"bp": 0,
 		"type": "Normal"
@@ -480,7 +487,6 @@ var MOVES_RBY = {
 		"bp": 55,
 		"type": "Grass",
 		"category": "Physical",
-		"alwaysCrit": true,
 		"isSlicing": true,
 		"acc": 95
 	},
@@ -518,6 +524,14 @@ var MOVES_RBY = {
 		"type": "Rock",
 		"category": "Physical",
 		"acc": 90
+	},
+	"Rolling Kick": {
+		"bp": 60,
+		"type": "Fighting",
+		"category": "Physical",
+		"makesContact": true,
+		"hasSecondaryEffect": true,
+		"acc": 85
 	},
 	"Screech": {
 		"bp": 0,
@@ -559,11 +573,17 @@ var MOVES_RBY = {
 		"makesContact": true,
 		"acc": 100
 	},
+	"Slam": {
+		"bp": 80,
+		"type": "Normal",
+		"category": "Physical",
+		"makesContact": true,
+		"acc": 75
+	},
 	"Slash": {
 		"bp": 70,
 		"type": "Normal",
 		"category": "Physical",
-		"alwaysCrit": true,
 		"makesContact": true,
 		"isSlicing": true,
 		"acc": 100
@@ -736,6 +756,13 @@ var MOVES_RBY = {
 		"type": "Bug",
 		"isTwoHit": true,
 		"hasSecondaryEffect": true,
+		"acc": 100
+	},
+	"Vise Grip": {
+		"bp": 55,
+		"type": "Normal",
+		"category": "Physical",
+		"makesContact": true,
 		"acc": 100
 	},
 	"Waterfall": {
@@ -1173,7 +1200,6 @@ var MOVES_GSC = $.extend(true, {}, MOVES_RBY, {
 		"hasSecondaryEffect": true,
 		"acc": 100
 	},
-	"Razor Leaf": {"alwaysCrit": false},
 	"Return": {
 		"bp": 102,
 		"type": "Normal",
@@ -1230,7 +1256,6 @@ var MOVES_GSC = $.extend(true, {}, MOVES_RBY, {
 		"isBullet": true,
 		"acc": 100
 	},
-	"Slash": {"alwaysCrit": false},
 	"Sleep Talk": {
 		"bp": 0,
 		"type": "Normal"

@@ -1501,8 +1501,8 @@ function Side(format, terrain, weather, isAuraFairy, isAuraDark, isAuraBreak, is
 	this.isRuinBeads = isRuinBeads;
 }
 
-// note that this function only checks values against the current gen.
-function validateSetdex() {
+// note that this function only checks the setdex against the currently selected game.
+function validateSetdex(ignoreMoves = false) {
 	let failedValidation = false;
 	for (const [speciesName, speciesSets] of Object.entries(setdex)) {
 		if (!(speciesName in pokedex)) {
@@ -1518,8 +1518,9 @@ function validateSetdex() {
 		}
 		for (const [setName, setObj] of Object.entries(speciesSets)) {
 			let outputText = [];
-			if (setObj.item && items.indexOf(setObj.item) == -1) {
-				outputText.push("item " + setObj.item);
+			if (setObj.item && items.indexOf(setObj.item) == -1 &&
+				!(pokedexEntry.formes && pokedexEntry.formes[getFormeNum(setName, speciesName)].startsWith("Mega"))) {
+					outputText.push("item " + setObj.item);
 			}
 			if (pokedexEntry.abilities && setObj.ability && pokedexEntry.abilities.indexOf(setObj.ability) == -1) {
 				outputText.push("ability " + setObj.ability);
@@ -1527,15 +1528,17 @@ function validateSetdex() {
 			if (setObj.nature && !(setObj.nature in NATURES)) {
 				outputText.push("nature " + setObj.nature);
 			}
-			if (setObj.moves) {
-				for (let i = 0; i < setObj.length; i++) {
-					let moveName = setObj[i];
-					if (moveName && !(moveName in moves)) {
-						outputText.push("move " + moveName);
+			if (!ignoreMoves) {
+				if (setObj.moves) {
+					for (let i = 0; i < setObj.moves.length; i++) {
+						let moveName = setObj.moves[i];
+						if (moveName && !(moveName in moves)) {
+							outputText.push("move " + moveName);
+						}
 					}
+				} else {
+					outputText.push("no moves found");
 				}
-			} else {
-				outputText.push("no moves found");
 			}
 			if (outputText.length > 0) {
 				failedValidation = true;
@@ -1544,7 +1547,7 @@ function validateSetdex() {
 		}
 	}
 	if (!failedValidation) {
-		console.log("No validation issues found for gameId " + gameId + ".");
+		console.log("No " + (ignoreMoves ? "non-move " : "") + "validation issues found for gameId " + gameId + ".");
 	}
 }
 
