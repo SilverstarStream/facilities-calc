@@ -92,16 +92,15 @@ for (var i = 0; i < 4; i++) {
 
 var damageResults;
 function calculate() {
-	var p1info = $("#p1");
-	var p2info = $("#p2");
-	var p1 = new Pokemon(p1info);
-	var p2 = new Pokemon(p2info);
-	var field = new Field();
+	let p1info = $("#p1");
+	let p2info = $("#p2");
+	let p1 = new Pokemon(p1info);
+	let p2 = new Pokemon(p2info);
+	let field = new Field();
 	//optimizeEVs("#p1", p1);
 	//optimizeEVs("#p2", p2);
 	damageResults = calculateAllMoves(p1, p2, field);
-	p1info.find(".sp .totalMod").text(p1.stats.sp);
-	p2info.find(".sp .totalMod").text(p2.stats.sp);
+	setSpeed(p1info, p2info, p1, p2);
 	// Removed the auto-select highest damage since it's rarely useful for facilities (or any format?)
 	//var highestMaxPercent = -1;
 	//var bestResult = $(resultLocations[0][0].move);
@@ -125,6 +124,13 @@ function calculate() {
 $(".result-move").change(function () {
 	updateDamageText($(this));
 });
+
+function setSpeed(p1info, p2info, p1, p2) {
+	let p1Speed = p1.stats.sp;
+	let p2Speed = p2.stats.sp;
+	p1info.find(".sp .totalMod").text(p1Speed).css({ "font-weight": p1Speed > p2Speed ? "bold" : "" });
+	p2info.find(".sp .totalMod").text(p2Speed).css({ "font-weight": p2Speed > p1Speed ? "bold" : "" });
+}
 
 const MAX_GROUP_COUNT = 14;
 const MAX_UNGROUPED_COUNT = MAX_GROUP_COUNT + 4;
