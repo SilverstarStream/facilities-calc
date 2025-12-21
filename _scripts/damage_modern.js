@@ -1398,12 +1398,12 @@ function getMoveEffectiveness(move, mType, defType, isGhostRevealed, field, isSt
 	} else if (mType === "None" || mType === "Stellar") {
 		// let the caller handle Stellar attacking a terastallized defender
 		return 1;
-	} else if (isGhostRevealed && defType === "Ghost" && (mType === "Normal" || mType === "Fighting")) {
+	} else if (isGhostRevealed && defType === "Ghost" && ["Normal", "Fighting"].some(type => type == mType)) {
 		return 1;
 	} else if (defType === "Flying" && mType === "Ground" && (defenderGrounded || move.name === "Thousand Arrows")) {
 		// let the caller handle the Iron Ball and Thousand Arrows cases
 		return 1;
-	} else if (isStrongWinds && defType === "Flying" && (mType === "Electric" || mType === "Ice" || mType === "Rock")) {
+	} else if (isStrongWinds && defType === "Flying" && ["Electric", "Ice", "Rock"].some(type => type == mType)) {
 		description.weather = "Strong Winds";
 		return 1;
 	} else if (move.name === "Freeze-Dry" && defType === "Water") {
@@ -1501,11 +1501,11 @@ function killsShedinja(attacker, defender, move, field = {}) {
 		return false;
 	}
 	let afflictable = defender.status === "Healthy" && !(field.terrain === "Misty" && isGrounded(defender, field));
-	let poisonable = afflictable && !defender.hasType("Poison") && !defender.hasType("Steel");
+	let poisonable = afflictable && !["Poison", "Steel"].some(type => defender.hasType(type));
 	let burnable = afflictable && !defender.hasType("Fire");
 
 	let weather = defender.item !== "Safety Goggles" &&
-	((move.name === "Sandstorm" && !defender.hasType("Rock") && !defender.hasType("Steel") && !defender.hasType("Ground")) || (move.name === "Hail" && !defender.hasType("Ice")));
+	((move.name === "Sandstorm" && !["Rock", "Steel", "Ground"].some(type => defender.hasType(type))) || (move.name === "Hail" && !defender.hasType("Ice")));
 	// akin to Sash, status berries should not be accounted for
 	let poison = (["Toxic", "Poison Gas", "Toxic Thread"].includes(move.name) || (move.name === "Poison Powder" && defender.item !== "Safety Goggles" && !defender.hasType("Grass"))) &&
 	(poisonable || (afflictable && attacker.curAbility === "Corrosion"));
