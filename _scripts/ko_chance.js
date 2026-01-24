@@ -296,7 +296,7 @@ function calculateNHKO(upperHitCount, damageInfo, firstHitDamageInfo, isCheckMul
 		let turnCount = isCheckMultihitOHKO ? 1 : hitCount;
 		let previousTurnsEot = accumulatedEOT(turnCount - 1);
 		// check for an outright guaranteed KO
-		if (checkHPThreshold(0, firstHitDamageInfo.min + damageInfo.min * (hitCount - 1) + previousTurnsEot - berryRecovery, turnCount)) {
+		if (checkHPThreshold(0, firstHitDamageInfo.min + damageInfo.min * (hitCount - 1) - previousTurnsEot - berryRecovery, turnCount)) {
 			return {
 				hitCount: hitCount,
 				koCombinations: GUARANTEED,
