@@ -1592,8 +1592,6 @@ function combineDuplicateDamageInfo(damageInfo) {
 
 function combineDamageInfo(iDamageInfo, jDamageInfo) {
 	let combinedMap = new Map();
-	let minDamage = -1;
-	let maxDamage = -1;
 	for (const [iDamage, iCount] of iDamageInfo.damageMap) {
 		for (const [jDamage, jCount] of jDamageInfo.damageMap) {
 			mapAddKey(combinedMap, iDamage + jDamage, iCount * jCount);
@@ -1645,10 +1643,10 @@ function getAssembledDamageInfo(result, moveHits, isFirstHit) {
 	if (result.tripleAxelDamage) {
 		let damageArrays = isFirstHit && result.teraShellDamage ? result.teraShellDamage : result.tripleAxelDamage;
 		let assembledDamageInfo = combineDamageInfo(damageInfoFromArray(isFirstHit ? result.firstHitDamage : damageArrays[0]), damageInfoFromArray(damageArrays[1]));
-		if (damageArrays.length == 3) {
-			return combineDamageInfo(assembledDamageInfo, damageInfoFromArray(damageArrays[2]));
+		if (damageArrays.length == 2) {
+			return assembledDamageInfo;
 		}
-		return assembledDamageMap;
+		return combineDamageInfo(assembledDamageInfo, damageInfoFromArray(damageArrays[2]));
 	}
 	let resultDamageInfo = damageInfoFromArray(result.damage);
 	if (result.childDamage) {
