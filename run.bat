@@ -5,7 +5,9 @@ IF %ERRORLEVEL% == 0 SET interactive=0
 
 cd %~dp0
 start http://127.0.0.1:4000
+:: script main content
 bundle exec jekyll serve
+:: end script main content
 
 IF "%interactive%"=="0" PAUSE
 EXIT /B 0

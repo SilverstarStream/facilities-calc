@@ -24,9 +24,9 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
-node_modules
 package-lock.*
-tests.js
-/_site
+_site
 .sass-cache
+.jekyll-cache
+.jekyll-metadata
 vendor

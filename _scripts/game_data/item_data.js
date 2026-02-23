@@ -189,7 +189,9 @@ var ITEMS_XY = ITEMS_BW.concat([
 	"Snowball",
 	"Weakness Policy"
 ]);
-[ITEMS_XY, PLATES].forEach(itemSet => { itemSet.push("Pixie Plate"); });
+
+const PIXIE_PLATE = "Pixie Plate";
+[ITEMS_XY, PLATES].forEach(itemSet => { itemSet.push(PIXIE_PLATE); });
 
 var ITEMS_SM = ITEMS_XY.concat([
 	"Adrenaline Orb",
@@ -212,6 +214,8 @@ var ITEMS_SS = ITEMS_SM.concat([
 	"Throat Spray",
 	"Utility Umbrella"
 ]);
+
+var ITEMS_BDSP = ITEMS_DPP.concat(PIXIE_PLATE);
 
 var ITEMS_SV = ITEMS_SS.concat([
 	"Booster Energy",
@@ -296,7 +300,7 @@ for (let itemSet of [ITEMS_SS]) {
 	}
 }
 
-ITEMS_SS.push("Pixie Plate"); // SwSh specially includes only the Pixie Plate.
+ITEMS_SS.push(PIXIE_PLATE); // SwSh specially includes only the Pixie Plate.
 
 function getTechnoBlast(item) {
 	switch (item) {
