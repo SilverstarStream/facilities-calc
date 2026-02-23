@@ -1806,7 +1806,7 @@ function setGenProperties() {
 		pokedex = POKEDEX_BDSP;
 		setdex = SETDEX_GEN80;
 		moves = MOVES_SS;
-		items = ITEMS_DPP;
+		items = ITEMS_BDSP;
 		abilities = ABILITIES_SS;
 		forumLink = "https://www.smogon.com/forums/threads/bdsp-battle-tower-discussion-records.3693739/";
 	} else if (gameId == 9) {
