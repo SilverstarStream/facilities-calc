@@ -26,7 +26,7 @@ This damage calculator is committed to accurate and correct calculations. It use
 * Gen V-IX: this calculator is a fork of a calculator based on the Gen V [damage formula research](https://www.smogon.com/bw/articles/bw_complete_damage_formula) (the formula explained up through Gen VII: [DaWoblefet's Damage Dissertation](https://www.trainertower.com/dawoblefets-damage-dissertation/))
 * Gen VIII-IX: additional effects are researched on Smogon (SwSh [mechanics research](https://www.smogon.com/forums/threads/sword-shield-battle-mechanics-research.3655528/) | SV [mechanics research](https://www.smogon.com/forums/threads/scarlet-violet-battle-mechanics-research.3709545/))
 
-If there are any errors found while using the calc, please report the issue by either reaching out through the [Battle Facilities Discord](https://discord.gg/8RMcwybe2t) or [submitting an issue](https://github.com/to-metrion/to-metrion.github.io/issues/new/choose).
+If there are any errors found while using the calc, please report the issue by either reaching out through the [Battle Facilities Discord](https://discord.gg/8RMcwybe2t) or by submitting a [New Issue](https://github.com/to-metrion/to-metrion.github.io/issues).
 
 ## Contributing:
 The site is powered by Jekyll, with linting by nodejs' eslint.
@@ -52,11 +52,14 @@ Aside from that, the repo should be fairly simple to navigate.
 
 ##### Running the calc:
 The site can be ran locally by double-clicking ``run.bat``.
+
 This will open a page in the default browser that will have a connection error. Wait for several seconds for the site to build (this can be seen from the terminal), then refresh the page.
 
 #### Testing and PRing changes
 Please ensure your code passes our tests before submitting your PR!
+
 NOTE: Running the tests launches an instance of Firefox, and Firefox is required to be installed.
+
 As an alternative, Chrome can be used instead (must be installed). In this case, replace `Capybara.current_driver = :selenium_headless` with `Capybara.current_driver = :selenium_chrome_headless`.
 
 1. Double-click ``test.bat``.
