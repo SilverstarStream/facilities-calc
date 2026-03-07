@@ -12,6 +12,12 @@ class CapybaraTestCase < Minitest::Test
   end
 
 
+  def selectSet(setName)
+    first("#p1 .select2-container.set-selector", minimum: 1).click
+    find("li.select2-result", text: setName).click
+  end
+
+
   def test_loads_em
     find(:xpath, './/label[@for="game3"]').click
     assert_equal("Abra-1 Mimic vs. Abra-1: 0-0 (0 - 0%) -- nice move", find("#mainResult").text)
@@ -50,6 +56,35 @@ class CapybaraTestCase < Minitest::Test
   def test_loads_sv
     find(:xpath, './/label[@for="game9"]').click
     assert_equal("Abomasnow (No Move) vs. Abomasnow: 0-0 (0 - 0%) -- nice move", find("#mainResult").text)
+  end
+
+
+  def test_export_megas
+    find(:xpath, './/label[@for="game7"]').click
+
+    selectSet("Scizor-4")
+    find("#exportL").click
+    assert_equal(%q{Scizor-Mega @ Scizorite
+Ability: Technician
+Adamant Nature
+EVs: 252 HP / 252 Atk
+- X-Scissor
+- Aerial Ace
+- Roost
+- Bullet Punch},
+      find("#customMon").value)
+
+    selectSet("Charizard-3")
+    find("#exportL").click
+    assert_equal(%q{Charizard-Mega-Y @ Charizardite Y
+Ability: Drought
+Timid Nature
+EVs: 252 SpA / 252 Spe
+- Heat Wave
+- Solar Beam
+- Air Slash
+- Focus Blast},
+      find("#customMon").value)
   end
 
 end
