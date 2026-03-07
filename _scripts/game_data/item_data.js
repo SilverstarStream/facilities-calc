@@ -160,14 +160,18 @@ var ITEMS_DPP = ITEMS_ADV.concat([
 ],
 PLATES);
 
+var DRIVES = [
+	"Burn Drive",
+	"Chill Drive",
+	"Douse Drive",
+	"Shock Drive"
+];
+
 var ITEMS_BW = ITEMS_DPP.concat([
 	"Absorb Bulb",
 	"Air Balloon",
 	"Binding Band",
-	"Burn Drive",
 	"Cell Battery",
-	"Chill Drive",
-	"Douse Drive",
 	"Eject Button",
 	"Eviolite",
 	"Float Stone",
@@ -175,9 +179,9 @@ var ITEMS_BW = ITEMS_DPP.concat([
 	"Normal Gem",
 	"Red Card",
 	"Ring Target",
-	"Rocky Helmet",
-	"Shock Drive"
-]);
+	"Rocky Helmet"
+],
+DRIVES);
 
 var ITEMS_XY = ITEMS_BW.concat([
 	"Assault Vest",
@@ -235,6 +239,7 @@ var ITEMS_SV = ITEMS_SS.concat([
 ]);
 
 
+// Gen-exclusive items
 var NON_NORMAL_GEMS = [
 	"Bug Gem",
 	"Dark Gem",
@@ -301,6 +306,13 @@ for (let itemSet of [ITEMS_SS]) {
 }
 
 ITEMS_SS.push(PIXIE_PLATE); // SwSh specially includes only the Pixie Plate.
+
+// Remove Drives from an item array.
+for (let itemSet of [ITEMS_SV]) {
+	for (let drive of DRIVES) {
+		itemSet.splice(itemSet.indexOf(drive), 1);
+	}
+}
 
 function getTechnoBlast(item) {
 	switch (item) {
