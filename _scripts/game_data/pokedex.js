@@ -17255,7 +17255,102 @@ POKEDEX_SV["Empoleon"].abilities[POKEDEX_SV["Empoleon"].abilities.indexOf("Defia
 POKEDEX_SV["Shiftry"].abilities[POKEDEX_SV["Shiftry"].abilities.indexOf("Early Bird")] = "Wind Rider";
 
 
-var POKEDEX_MEGAS = {
+const MEGA_STONE_LOOKUP = {
+	"Abomasite": "Mega Abomasnow",
+	"Absolite Z": "Mega Absol Z",
+	"Absolite": "Mega Absol",
+	"Aerodactylite": "Mega Aerodactyl",
+	"Aggronite": "Mega Aggron",
+	"Alakazite": "Mega Alakazam",
+	"Altarianite": "Mega Altaria",
+	"Ampharosite": "Mega Ampharos",
+	"Audinite": "Mega Audino",
+	"Banettite": "Mega Banette",
+	"Barbaracite": "Mega Barbaracle",
+	"Baxcalibrite": "Mega Baxcalibur",
+	"Beedrillite": "Mega Beedrill",
+	"Blastoisinite": "Mega Blastoise",
+	"Blazikenite": "Mega Blaziken",
+	"Cameruptite": "Mega Camerupt",
+	"Chandelurite": "Mega Chandelure",
+	"Charizardite X": "Mega Charizard X",
+	"Charizardite Y": "Mega Charizard Y",
+	"Chesnaughtite": "Mega Chesnaught",
+	"Chimechite": "Mega Chimecho",
+	"Clefablite": "Mega Clefable",
+	"Crabominite": "Mega Crabominable",
+	"Darkranite": "Mega Darkrai",
+	"Delphoxite": "Mega Delphox",
+	"Diancite": "Mega Diancie",
+	"Dragalgite": "Mega Dragalge",
+	"Dragoninite": "Mega Dragonite",
+	"Drampanite": "Mega Drampa",
+	"Eelektrossite": "Mega Eelektross",
+	"Emboarite": "Mega Emboar",
+	"Excadrite": "Mega Excadrill",
+	"Falinksite": "Mega Falinks",
+	"Feraligite": "Mega Feraligatr",
+	"Floettite": "Mega Floette-E",
+	"Froslassite": "Mega Froslass",
+	"Galladite": "Mega Gallade",
+	"Garchompite Z": "Mega Garchomp Z",
+	"Garchompite": "Mega Garchomp",
+	"Gardevoirite": "Mega Gardevoir",
+	"Gengarite": "Mega Gengar",
+	"Glalitite": "Mega Glalie",
+	"Glimmoranite": "Mega Glimmora",
+	"Golisopite": "Mega Golisopod",
+	"Golurkite": "Mega Golurk",
+	"Greninjite": "Mega Greninja",
+	"Gyaradosite": "Mega Gyarados",
+	"Hawluchanite": "Mega Hawlucha",
+	"Heatranite": "Mega Heatran",
+	"Heracronite": "Mega Heracross",
+	"Houndoominite": "Mega Houndoom",
+	"Kangaskhanite": "Mega Kangaskhan",
+	"Latiasite": "Mega Latias",
+	"Latiosite": "Mega Latios",
+	"Lopunnite": "Mega Lopunny",
+	"Lucarionite Z": "Mega Lucario Z",
+	"Lucarionite": "Mega Lucario",
+	"Magearnite": "Mega Magearna",
+	"Malamarite": "Mega Malamar",
+	"Manectite": "Mega Manectric",
+	"Mawilite": "Mega Mawile",
+	"Medichamite": "Mega Medicham",
+	"Meganiumite": "Mega Meganium",
+	"Meowsticite": "Mega Meowstic",
+	"Metagrossite": "Mega Metagross",
+	"Mewtwonite X": "Mega Mewtwo X",
+	"Mewtwonite Y": "Mega Mewtwo Y",
+	"Pidgeotite": "Mega Pidgeot",
+	"Pinsirite": "Mega Pinsir",
+	"Pyroarite": "Mega Pyroar",
+	"Raichunite X": "Mega Raichu X",
+	"Raichunite Y": "Mega Raichu Y",
+	"Sablenite": "Mega Sableye",
+	"Salamencite": "Mega Salamence",
+	"Sceptilite": "Mega Sceptile",
+	"Scizorite": "Mega Scizor",
+	"Scolipite": "Mega Scolipede",
+	"Scovillainite": "Mega Scovillain",
+	"Scraftinite": "Mega Scrafty",
+	"Sharpedonite": "Mega Sharpedo",
+	"Skarmorite": "Mega Skarmory",
+	"Slowbronite": "Mega Slowbro",
+	"Staraptite": "Mega Staraptor",
+	"Starminite": "Mega Starmie",
+	"Steelixite": "Mega Steelix",
+	"Swampertite": "Mega Swampert",
+	"Tatsugirinite": "Mega Tatsugiri",
+	"Tyranitarite": "Mega Tyranitar",
+	"Venusaurite": "Mega Venusaur",
+	"Victreebelite": "Mega Victreebel",
+	"Zeraorite": "Mega Zeraora",
+	"Zygardite": "Mega Zygarde"
+};
+
+var POKEDEX_MEGAS_ORAS = {
 	"Mega Abomasnow": {
 		"t1": "Grass",
 		"t2": "Ice",
@@ -17267,11 +17362,9 @@ var POKEDEX_MEGAS = {
 			"sd": 105,
 			"sp": 30
 		},
-		"w": 185.0,
-		"abilities": ["Snow Warning"],
-		"hasBaseForme": "Abomasnow"
+		"w": 185,
+		"abilities": ["Snow Warning"]
 	},
-	"Abomasnow": {"formes": ["Abomasnow", "Mega Abomasnow"]},
 	"Mega Absol": {
 		"t1": "Dark",
 		"bs": {
@@ -17282,11 +17375,9 @@ var POKEDEX_MEGAS = {
 			"sd": 60,
 			"sp": 115
 		},
-		"w": 49.0,
-		"abilities": ["Magic Bounce"],
-		"hasBaseForme": "Absol"
+		"w": 49,
+		"abilities": ["Magic Bounce"]
 	},
-	"Absol": {"formes": ["Absol", "Mega Absol"]},
 	"Mega Aerodactyl": {
 		"t1": "Rock",
 		"t2": "Flying",
@@ -17298,11 +17389,9 @@ var POKEDEX_MEGAS = {
 			"sd": 95,
 			"sp": 150
 		},
-		"w": 79.0,
-		"abilities": ["Tough Claws"],
-		"hasBaseForme": "Aerodactyl"
+		"w": 79,
+		"abilities": ["Tough Claws"]
 	},
-	"Aerodactyl": {"formes": ["Aerodactyl", "Mega Aerodactyl"]},
 	"Mega Aggron": {
 		"t1": "Steel",
 		"bs": {
@@ -17313,11 +17402,9 @@ var POKEDEX_MEGAS = {
 			"sd": 80,
 			"sp": 50
 		},
-		"w": 395.0,
-		"abilities": ["Filter"],
-		"hasBaseForme": "Aggron"
+		"w": 395,
+		"abilities": ["Filter"]
 	},
-	"Aggron": {"formes": ["Aggron", "Mega Aggron"]},
 	"Mega Alakazam": {
 		"t1": "Psychic",
 		"bs": {
@@ -17328,11 +17415,9 @@ var POKEDEX_MEGAS = {
 			"sd": 105, // gen 7 value
 			"sp": 150
 		},
-		"w": 48.0,
-		"abilities": ["Trace"],
-		"hasBaseForme": "Alakazam"
+		"w": 48,
+		"abilities": ["Trace"]
 	},
-	"Alakazam": {"formes": ["Alakazam", "Mega Alakazam"]},
 	"Mega Altaria": {
 		"t1": "Dragon",
 		"t2": "Fairy",
@@ -17345,10 +17430,8 @@ var POKEDEX_MEGAS = {
 			"sp": 80
 		},
 		"w": 20.6,
-		"abilities": ["Pixilate"],
-		"hasBaseForme": "Altaria"
+		"abilities": ["Pixilate"]
 	},
-	"Altaria": {"formes": ["Altaria", "Mega Altaria"]},
 	"Mega Ampharos": {
 		"t1": "Electric",
 		"t2": "Dragon",
@@ -17361,10 +17444,8 @@ var POKEDEX_MEGAS = {
 			"sp": 45
 		},
 		"w": 61.5,
-		"abilities": ["Mold Breaker"],
-		"hasBaseForme": "Ampharos"
+		"abilities": ["Mold Breaker"]
 	},
-	"Ampharos": {"formes": ["Ampharos", "Mega Ampharos"]},
 	"Mega Audino": {
 		"t1": "Normal",
 		"t2": "Fairy",
@@ -17376,11 +17457,9 @@ var POKEDEX_MEGAS = {
 			"sd": 126,
 			"sp": 50
 		},
-		"w": 32.0,
-		"abilities": ["Healer"],
-		"hasBaseForme": "Audino"
+		"w": 32,
+		"abilities": ["Healer"]
 	},
-	"Audino": {"formes": ["Audino", "Mega Audino"]},
 	"Mega Banette": {
 		"t1": "Ghost",
 		"bs": {
@@ -17391,11 +17470,9 @@ var POKEDEX_MEGAS = {
 			"sd": 83,
 			"sp": 75
 		},
-		"w": 13.0,
-		"abilities": ["Prankster"],
-		"hasBaseForme": "Banette"
+		"w": 13,
+		"abilities": ["Prankster"]
 	},
-	"Banette": {"formes": ["Banette", "Mega Banette"]},
 	"Mega Beedrill": {
 		"t1": "Bug",
 		"t2": "Poison",
@@ -17408,10 +17485,8 @@ var POKEDEX_MEGAS = {
 			"sp": 145,
 		},
 		"w": 40.5,
-		"abilities": ["Adaptability"],
-		"hasBaseForme": "Beedrill"
+		"abilities": ["Adaptability"]
 	},
-	"Beedrill": {"formes": ["Beedrill", "Mega Beedrill"]},
 	"Mega Blastoise": {
 		"t1": "Water",
 		"bs": {
@@ -17423,10 +17498,8 @@ var POKEDEX_MEGAS = {
 			"sp": 78
 		},
 		"w": 101.1,
-		"abilities": ["Mega Launcher"],
-		"hasBaseForme": "Blastoise"
+		"abilities": ["Mega Launcher"]
 	},
-	"Blastoise": {"formes": ["Blastoise", "Mega Blastoise"]},
 	"Mega Blaziken": {
 		"t1": "Fire",
 		"t2": "Fighting",
@@ -17438,11 +17511,9 @@ var POKEDEX_MEGAS = {
 			"sd": 80,
 			"sp": 100
 		},
-		"w": 52.0,
-		"abilities": ["Speed Boost"],
-		"hasBaseForme": "Blaziken"
+		"w": 52,
+		"abilities": ["Speed Boost"]
 	},
-	"Blaziken": {"formes": ["Blaziken", "Mega Blaziken"]},
 	"Mega Camerupt": {
 		"t1": "Fire",
 		"t2": "Ground",
@@ -17455,10 +17526,8 @@ var POKEDEX_MEGAS = {
 			"sp": 20
 		},
 		"w": 320.5,
-		"abilities": ["Sheer Force"],
-		"hasBaseForme": "Camerupt"
+		"abilities": ["Sheer Force"]
 	},
-	"Camerupt": {"formes": ["Camerupt", "Mega Camerupt"]},
 	"Mega Charizard X": {
 		"t1": "Fire",
 		"t2": "Dragon",
@@ -17471,8 +17540,7 @@ var POKEDEX_MEGAS = {
 			"sp": 100
 		},
 		"w": 110.5,
-		"abilities": ["Tough Claws"],
-		"hasBaseForme": "Charizard"
+		"abilities": ["Tough Claws"]
 	},
 	"Mega Charizard Y": {
 		"t1": "Fire",
@@ -17486,10 +17554,8 @@ var POKEDEX_MEGAS = {
 			"sp": 100
 		},
 		"w": 100.5,
-		"abilities": ["Drought"],
-		"hasBaseForme": "Charizard"
+		"abilities": ["Drought"]
 	},
-	"Charizard": {"formes": ["Charizard", "Mega Charizard X", "Mega Charizard Y"]},
 	"Mega Diancie": {
 		"t1": "Rock",
 		"t2": "Fairy",
@@ -17502,10 +17568,8 @@ var POKEDEX_MEGAS = {
 			"sp": 110
 		},
 		"w": 27.8,
-		"abilities": ["Magic Bounce"],
-		"hasBaseForme": "Diancie"
+		"abilities": ["Magic Bounce"]
 	},
-	"Diancie": {"formes": ["Diancie", "Mega Diancie"]},
 	"Mega Gallade": {
 		"t1": "Psychic",
 		"t2": "Fighting",
@@ -17518,10 +17582,8 @@ var POKEDEX_MEGAS = {
 			"sp": 110
 		},
 		"w": 56.4,
-		"abilities": ["Inner Focus"],
-		"hasBaseForme": "Gallade"
+		"abilities": ["Inner Focus"]
 	},
-	"Gallade": {"formes": ["Gallade", "Mega Gallade"]},
 	"Mega Garchomp": {
 		"t1": "Dragon",
 		"t2": "Ground",
@@ -17533,11 +17595,9 @@ var POKEDEX_MEGAS = {
 			"sd": 95,
 			"sp": 92
 		},
-		"w": 95.0,
-		"abilities": ["Sand Force"],
-		"hasBaseForme": "Garchomp"
+		"w": 95,
+		"abilities": ["Sand Force"]
 	},
-	"Garchomp": {"formes": ["Garchomp", "Mega Garchomp"]},
 	"Mega Gardevoir": {
 		"t1": "Psychic",
 		"t2": "Fairy",
@@ -17550,10 +17610,8 @@ var POKEDEX_MEGAS = {
 			"sp": 100
 		},
 		"w": 48.4,
-		"abilities": ["Pixilate"],
-		"hasBaseForme": "Gardevoir"
+		"abilities": ["Pixilate"]
 	},
-	"Gardevoir": {"formes": ["Gardevoir", "Mega Gardevoir"]},
 	"Mega Gengar": {
 		"t1": "Ghost",
 		"t2": "Poison",
@@ -17566,10 +17624,8 @@ var POKEDEX_MEGAS = {
 			"sp": 130
 		},
 		"w": 40.5,
-		"abilities": ["Shadow Tag"],
-		"hasBaseForme": "Gengar"
+		"abilities": ["Shadow Tag"]
 	},
-	"Gengar": {"formes": ["Gengar", "Mega Gengar"]},
 	"Mega Glalie": {
 		"t1": "Ice",
 		"bs": {
@@ -17581,10 +17637,8 @@ var POKEDEX_MEGAS = {
 			"sp": 100
 		},
 		"w": 350.2,
-		"abilities": ["Refrigerate"],
-		"hasBaseForme": "Glalie"
+		"abilities": ["Refrigerate"]
 	},
-	"Glalie": {"formes": ["Glalie", "Mega Glalie"]},
 	"Mega Gyarados": {
 		"t1": "Water",
 		"t2": "Dark",
@@ -17596,11 +17650,9 @@ var POKEDEX_MEGAS = {
 			"sd": 130,
 			"sp": 81
 		},
-		"w": 305.0,
-		"abilities": ["Mold Breaker"],
-		"hasBaseForme": "Gyarados"
+		"w": 305,
+		"abilities": ["Mold Breaker"]
 	},
-	"Gyarados": {"formes": ["Gyarados", "Mega Gyarados"]},
 	"Mega Heracross": {
 		"t1": "Bug",
 		"t2": "Fighting",
@@ -17613,10 +17665,8 @@ var POKEDEX_MEGAS = {
 			"sp": 75
 		},
 		"w": 62.5,
-		"abilities": ["Skill Link"],
-		"hasBaseForme": "Heracross"
+		"abilities": ["Skill Link"]
 	},
-	"Heracross": {"formes": ["Heracross", "Mega Heracross"]},
 	"Mega Houndoom": {
 		"t1": "Dark",
 		"t2": "Fire",
@@ -17629,10 +17679,8 @@ var POKEDEX_MEGAS = {
 			"sp": 115
 		},
 		"w": 49.5,
-		"abilities": ["Solar Power"],
-		"hasBaseForme": "Houndoom"
+		"abilities": ["Solar Power"]
 	},
-	"Houndoom": {"formes": ["Houndoom", "Mega Houndoom"]},
 	"Mega Kangaskhan": {
 		"t1": "Normal",
 		"bs": {
@@ -17643,11 +17691,9 @@ var POKEDEX_MEGAS = {
 			"sd": 100,
 			"sp": 100
 		},
-		"w": 100.0,
-		"abilities": ["Parental Bond"],
-		"hasBaseForme": "Kangaskhan"
+		"w": 100,
+		"abilities": ["Parental Bond"]
 	},
-	"Kangaskhan": {"formes": ["Kangaskhan", "Mega Kangaskhan"]},
 	"Mega Latias": {
 		"t1": "Dragon",
 		"t2": "Psychic",
@@ -17659,11 +17705,9 @@ var POKEDEX_MEGAS = {
 			"sd": 150,
 			"sp": 110
 		},
-		"w": 52.0,
-		"abilities": ["Levitate"],
-		"hasBaseForme": "Latias"
+		"w": 52,
+		"abilities": ["Levitate"]
 	},
-	"Latias": {"formes": ["Latias", "Mega Latias"]},
 	"Mega Latios": {
 		"t1": "Dragon",
 		"t2": "Psychic",
@@ -17675,11 +17719,9 @@ var POKEDEX_MEGAS = {
 			"sd": 120,
 			"sp": 110
 		},
-		"w": 70.0,
-		"abilities": ["Levitate"],
-		"hasBaseForme": "Latios"
+		"w": 70,
+		"abilities": ["Levitate"]
 	},
-	"Latios": {"formes": ["Latios", "Mega Latios"]},
 	"Mega Lopunny": {
 		"t1": "Normal",
 		"t2": "Fighting",
@@ -17692,10 +17734,8 @@ var POKEDEX_MEGAS = {
 			"sp": 135
 		},
 		"w": 28.3,
-		"abilities": ["Scrappy"],
-		"hasBaseForme": "Lopunny"
+		"abilities": ["Scrappy"]
 	},
-	"Lopunny": {"formes": ["Lopunny", "Mega Lopunny"]},
 	"Mega Lucario": {
 		"t1": "Fighting",
 		"t2": "Steel",
@@ -17708,10 +17748,8 @@ var POKEDEX_MEGAS = {
 			"sp": 112
 		},
 		"w": 57.5,
-		"abilities": ["Adaptability"],
-		"hasBaseForme": "Lucario"
+		"abilities": ["Adaptability"]
 	},
-	"Lucario": {"formes": ["Lucario", "Mega Lucario"]},
 	"Mega Manectric": {
 		"t1": "Electric",
 		"bs": {
@@ -17722,11 +17760,9 @@ var POKEDEX_MEGAS = {
 			"sd": 80,
 			"sp": 135
 		},
-		"w": 44.0,
-		"abilities": ["Intimidate"],
-		"hasBaseForme": "Manectric"
+		"w": 44,
+		"abilities": ["Intimidate"]
 	},
-	"Manectric": {"formes": ["Manectric", "Mega Manectric"]},
 	"Mega Mawile": {
 		"t1": "Steel",
 		"t2": "Fairy",
@@ -17739,10 +17775,8 @@ var POKEDEX_MEGAS = {
 			"sp": 50
 		},
 		"w": 23.5,
-		"abilities": ["Huge Power"],
-		"hasBaseForme": "Mawile"
+		"abilities": ["Huge Power"]
 	},
-	"Mawile": {"formes": ["Mawile", "Mega Mawile"]},
 	"Mega Medicham": {
 		"t1": "Fighting",
 		"t2": "Psychic",
@@ -17755,10 +17789,8 @@ var POKEDEX_MEGAS = {
 			"sp": 100
 		},
 		"w": 31.5,
-		"abilities": ["Pure Power"],
-		"hasBaseForme": "Medicham"
+		"abilities": ["Pure Power"]
 	},
-	"Medicham": {"formes": ["Medicham", "Mega Medicham"]},
 	"Mega Metagross": {
 		"t1": "Steel",
 		"t2": "Psychic",
@@ -17771,10 +17803,8 @@ var POKEDEX_MEGAS = {
 			"sp": 110
 		},
 		"w": 942.9,
-		"abilities": ["Tough Claws"],
-		"hasBaseForme": "Metagross"
+		"abilities": ["Tough Claws"]
 	},
-	"Metagross": {"formes": ["Metagross", "Mega Metagross"]},
 	"Mega Mewtwo X": {
 		"t1": "Psychic",
 		"t2": "Fighting",
@@ -17786,9 +17816,8 @@ var POKEDEX_MEGAS = {
 			"sd": 100,
 			"sp": 130
 		},
-		"w": 127.0,
-		"abilities": ["Steadfast"],
-		"hasBaseForme": "Mewtwo"
+		"w": 127,
+		"abilities": ["Steadfast"]
 	},
 	"Mega Mewtwo Y": {
 		"t1": "Psychic",
@@ -17800,11 +17829,9 @@ var POKEDEX_MEGAS = {
 			"sd": 120,
 			"sp": 140
 		},
-		"w": 33.0,
-		"abilities": ["Insomnia"],
-		"hasBaseForme": "Mewtwo"
+		"w": 33,
+		"abilities": ["Insomnia"]
 	},
-	"Mewtwo": {"formes": ["Mewtwo", "Mega Mewtwo X", "Mega Mewtwo Y"]},
 	"Mega Pidgeot": {
 		"t1": "Normal",
 		"t2": "Flying",
@@ -17817,10 +17844,8 @@ var POKEDEX_MEGAS = {
 			"sp": 121
 		},
 		"w": 50.5,
-		"abilities": ["No Guard"],
-		"hasBaseForme": "Pidgeot"
+		"abilities": ["No Guard"]
 	},
-	"Pidgeot": {"formes": ["Pidgeot", "Mega Pidgeot"]},
 	"Mega Pinsir": {
 		"t1": "Bug",
 		"t2": "Flying",
@@ -17832,11 +17857,9 @@ var POKEDEX_MEGAS = {
 			"sd": 90,
 			"sp": 105
 		},
-		"w": 59.0,
-		"abilities": ["Aerilate"],
-		"hasBaseForme": "Pinsir"
+		"w": 59,
+		"abilities": ["Aerilate"]
 	},
-	"Pinsir": {"formes": ["Pinsir", "Mega Pinsir"]},
 	"Mega Rayquaza": {
 		"t1": "Dragon",
 		"t2": "Flying",
@@ -17848,11 +17871,9 @@ var POKEDEX_MEGAS = {
 			"sd": 100,
 			"sp": 115
 		},
-		"w": 392.0,
-		"abilities": ["Delta Stream"],
-		"hasBaseForme": "Rayquaza"
+		"w": 392,
+		"abilities": ["Delta Stream"]
 	},
-	"Rayquaza": {"formes": ["Rayquaza", "Mega Rayquaza"]},
 	"Mega Sableye": {
 		"t1": "Dark",
 		"t2": "Ghost",
@@ -17864,11 +17885,9 @@ var POKEDEX_MEGAS = {
 			"sd": 115,
 			"sp": 20
 		},
-		"w": 161.0,
-		"abilities": ["Magic Bounce"],
-		"hasBaseForme": "Sableye"
+		"w": 161,
+		"abilities": ["Magic Bounce"]
 	},
-	"Sableye": {"formes": ["Sableye", "Mega Sableye"]},
 	"Mega Salamence": {
 		"t1": "Dragon",
 		"t2": "Flying",
@@ -17881,10 +17900,8 @@ var POKEDEX_MEGAS = {
 			"sp": 120
 		},
 		"w": 112.6,
-		"abilities": ["Aerilate"],
-		"hasBaseForme": "Salamence"
+		"abilities": ["Aerilate"]
 	},
-	"Salamence": {"formes": ["Salamence", "Mega Salamence"]},
 	"Mega Sceptile": {
 		"t1": "Grass",
 		"t2": "Dragon",
@@ -17897,10 +17914,8 @@ var POKEDEX_MEGAS = {
 			"sp": 145
 		},
 		"w": 55.2,
-		"abilities": ["Lightning Rod"],
-		"hasBaseForme": "Sceptile"
+		"abilities": ["Lightning Rod"]
 	},
-	"Sceptile": {"formes": ["Sceptile", "Mega Sceptile"]},
 	"Mega Scizor": {
 		"t1": "Bug",
 		"t2": "Steel",
@@ -17912,11 +17927,9 @@ var POKEDEX_MEGAS = {
 			"sd": 100,
 			"sp": 75
 		},
-		"w": 125.0,
-		"abilities": ["Technician"],
-		"hasBaseForme": "Scizor"
+		"w": 125,
+		"abilities": ["Technician"]
 	},
-	"Scizor": {"formes": ["Scizor", "Mega Scizor"]},
 	"Mega Sharpedo": {
 		"t1": "Water",
 		"t2": "Dark",
@@ -17929,10 +17942,8 @@ var POKEDEX_MEGAS = {
 			"sp": 105
 		},
 		"w": 130.3,
-		"abilities": ["Strong Jaw"],
-		"hasBaseForme": "Sharpedo"
+		"abilities": ["Strong Jaw"]
 	},
-	"Sharpedo": {"formes": ["Sharpedo", "Mega Sharpedo"]},
 	"Mega Slowbro": {
 		"t1": "Water",
 		"t2": "Psychic",
@@ -17944,11 +17955,9 @@ var POKEDEX_MEGAS = {
 			"sd": 80,
 			"sp": 30
 		},
-		"w": 120.0,
-		"abilities": ["Shell Armor"],
-		"hasBaseForme": "Slowbro"
+		"w": 120,
+		"abilities": ["Shell Armor"]
 	},
-	"Slowbro": {"formes": ["Slowbro", "Mega Slowbro"]},
 	"Mega Steelix": {
 		"t1": "Steel",
 		"t2": "Ground",
@@ -17960,11 +17969,9 @@ var POKEDEX_MEGAS = {
 			"sd": 95,
 			"sp": 30
 		},
-		"w": 740.0,
-		"abilities": ["Sand Force"],
-		"hasBaseForme": "Steelix"
+		"w": 740,
+		"abilities": ["Sand Force"]
 	},
-	"Steelix": {"formes": ["Steelix", "Mega Steelix"]},
 	"Mega Swampert": {
 		"t1": "Water",
 		"t2": "Ground",
@@ -17976,11 +17983,9 @@ var POKEDEX_MEGAS = {
 			"sd": 110,
 			"sp": 70
 		},
-		"w": 102.0,
-		"abilities": ["Swift Swim"],
-		"hasBaseForme": "Swampert"
+		"w": 102,
+		"abilities": ["Swift Swim"]
 	},
-	"Swampert": {"formes": ["Swampert", "Mega Swampert"]},
 	"Mega Tyranitar": {
 		"t1": "Rock",
 		"t2": "Dark",
@@ -17992,11 +17997,9 @@ var POKEDEX_MEGAS = {
 			"sd": 120,
 			"sp": 71
 		},
-		"w": 255.0,
-		"abilities": ["Sand Stream"],
-		"hasBaseForme": "Tyranitar"
+		"w": 255,
+		"abilities": ["Sand Stream"]
 	},
-	"Tyranitar": {"formes": ["Tyranitar", "Mega Tyranitar"]},
 	"Mega Venusaur": {
 		"t1": "Grass",
 		"t2": "Poison",
@@ -18009,11 +18012,657 @@ var POKEDEX_MEGAS = {
 			"sp": 80
 		},
 		"w": 155.5,
-		"abilities": ["Thick Fat"],
-		"hasBaseForme": "Venusaur"
+		"abilities": ["Thick Fat"]
 	},
-	"Venusaur": {"formes": ["Venusaur", "Mega Venusaur"]}
+	"Charizard": { "formes": ["Charizard", "Mega Charizard X", "Mega Charizard Y"] },
+	"Mewtwo": { "formes": ["Mewtwo", "Mega Mewtwo X", "Mega Mewtwo Y"] }
 };
+
+var POKEDEX_MEGAS_LEGENDS_ZA = {
+	"Mega Clefable": {
+		"t1": "Fairy",
+		"t2": "Flying",
+		"bs": {
+			"hp": 95,
+			"at": 80,
+			"df": 93,
+			"sa": 135,
+			"sd": 110,
+			"sp": 70
+		},
+		"w": 42.3,
+		"abilities": [""]
+	},
+	"Mega Victreebel": {
+		"t1": "Grass",
+		"t2": "Poison",
+		"bs": {
+			"hp": 80,
+			"at": 125,
+			"df": 85,
+			"sa": 135,
+			"sd": 95,
+			"sp": 70
+		},
+		"w": 125.5,
+		"abilities": [""]
+	},
+	"Mega Starmie": {
+		"t1": "Water",
+		"t2": "Psychic",
+		"bs": {
+			"hp": 60,
+			"at": 140, // TODO
+			"df": 105,
+			"sa": 130,
+			"sd": 105,
+			"sp": 120
+		},
+		"w": 80,
+		"abilities": [""]
+	},
+	"Mega Dragonite": {
+		"t1": "Dragon",
+		"t2": "Flying",
+		"bs": {
+			"hp": 91,
+			"at": 124,
+			"df": 115,
+			"sa": 145,
+			"sd": 125,
+			"sp": 100
+		},
+		"w": 290,
+		"abilities": [""]
+	},
+	"Mega Meganium": {
+		"t1": "Grass",
+		"t2": "Fairy",
+		"bs": {
+			"hp": 80,
+			"at": 92,
+			"df": 115,
+			"sa": 143,
+			"sd": 115,
+			"sp": 80
+		},
+		"w": 201,
+		"abilities": [""]
+	},
+	"Mega Feraligatr": {
+		"t1": "Water",
+		"t2": "Dragon",
+		"bs": {
+			"hp": 85,
+			"at": 160,
+			"df": 125,
+			"sa": 89,
+			"sd": 93,
+			"sp": 78
+		},
+		"w": 108.8,
+		"abilities": [""]
+	},
+	"Mega Skarmory": {
+		"t1": "Steel",
+		"t2": "Flying",
+		"bs": {
+			"hp": 65,
+			"at": 140,
+			"df": 110,
+			"sa": 40,
+			"sd": 100,
+			"sp": 110
+		},
+		"w": 40.4,
+		"abilities": [""]
+	},
+	"Mega Froslass": {
+		"t1": "Ice",
+		"t2": "Ghost",
+		"bs": {
+			"hp": 70,
+			"at": 80,
+			"df": 70,
+			"sa": 140,
+			"sd": 100,
+			"sp": 120
+		},
+		"w": 29.6,
+		"abilities": [""]
+	},
+	"Mega Heatran": {
+		"t1": "Fire",
+		"t2": "Steel",
+		"bs": {
+			"hp": 91,
+			"at": 120,
+			"df": 106,
+			"sa": 175,
+			"sd": 141,
+			"sp": 67
+		},
+		"w": 570,
+		"abilities": [""]
+	},
+	"Mega Darkrai": {
+		"t1": "Dark",
+		"bs": {
+			"hp": 70,
+			"at": 120,
+			"df": 130,
+			"sa": 165,
+			"sd": 130,
+			"sp": 85
+		},
+		"w": 240,
+		"abilities": [""]
+	},
+	"Mega Emboar": {
+		"t1": "Fire",
+		"t2": "Fighting",
+		"bs": {
+			"hp": 110,
+			"at": 148,
+			"df": 75,
+			"sa": 110,
+			"sd": 110,
+			"sp": 75
+		},
+		"w": 180.3,
+		"abilities": [""]
+	},
+	"Mega Excadrill": {
+		"t1": "Ground",
+		"t2": "Steel",
+		"bs": {
+			"hp": 110,
+			"at": 165,
+			"df": 100,
+			"sa": 65,
+			"sd": 65,
+			"sp": 103
+		},
+		"w": 60,
+		"abilities": [""]
+	},
+	"Mega Scolipede": {
+		"t1": "Bug",
+		"t2": "Poison",
+		"bs": {
+			"hp": 60,
+			"at": 140,
+			"df": 149,
+			"sa": 75,
+			"sd": 99,
+			"sp": 62
+		},
+		"w": 130.5,
+		"abilities": [""]
+	},
+	"Mega Scrafty": {
+		"t1": "Dark",
+		"t2": "Fighting",
+		"bs": {
+			"hp": 65,
+			"at": 130,
+			"df": 135,
+			"sa": 55,
+			"sd": 135,
+			"sp": 68
+		},
+		"w": 31,
+		"abilities": [""]
+	},
+	"Mega Eelektross": {
+		"t1": "Electric",
+		"t2": "",
+		"bs": {
+			"hp": 80,
+			"at": 145,
+			"df": 80,
+			"sa": 135,
+			"sd": 90,
+			"sp": 80
+		},
+		"w": 180,
+		"abilities": [""]
+	},
+	"Mega Chandelure": {
+		"t1": "Ghost",
+		"t2": "Fire",
+		"bs": {
+			"hp": 60,
+			"at": 75,
+			"df": 110,
+			"sa": 175,
+			"sd": 110,
+			"sp": 90
+		},
+		"w": 69.6,
+		"abilities": [""]
+	},
+	"Mega Chesnaught": {
+		"t1": "Grass",
+		"t2": "Fighting",
+		"bs": {
+			"hp": 88,
+			"at": 137,
+			"df": 172,
+			"sa": 74,
+			"sd": 115,
+			"sp": 44
+		},
+		"w": 90,
+		"abilities": [""]
+	},
+	"Mega Delphox": {
+		"t1": "Fire",
+		"t2": "Psychic",
+		"bs": {
+			"hp": 75,
+			"at": 69,
+			"df": 72,
+			"sa": 159,
+			"sd": 125,
+			"sp": 134
+		},
+		"w": 39,
+		"abilities": [""]
+	},
+	"Mega Greninja": {
+		"t1": "Water",
+		"t2": "Dark",
+		"bs": {
+			"hp": 72,
+			"at": 125,
+			"df": 77,
+			"sa": 133,
+			"sd": 81,
+			"sp": 142
+		},
+		"w": 40,
+		"abilities": [""]
+	},
+	"Mega Pyroar": {
+		"t1": "Fire",
+		"t2": "Normal",
+		"bs": {
+			"hp": 86,
+			"at": 88,
+			"df": 92,
+			"sa": 129,
+			"sd": 86,
+			"sp": 126
+		},
+		"w": 93.3,
+		"abilities": [""]
+	},
+	"Mega Floette-E": {
+		"t1": "Fairy",
+		"bs": {
+			"hp": 74,
+			"at": 85,
+			"df": 87,
+			"sa": 155,
+			"sd": 148,
+			"sp": 102
+		},
+		"w": 100.8,
+		"abilities": [""]
+	},
+	"Mega Malamar": {
+		"t1": "Dark",
+		"t2": "Psychic",
+		"bs": {
+			"hp": 86,
+			"at": 102,
+			"df": 88,
+			"sa": 98,
+			"sd": 120,
+			"sp": 88
+		},
+		"w": 69.8,
+		"abilities": [""]
+	},
+	"Mega Barbaracle": {
+		"t1": "Rock",
+		"t2": "Fighting",
+		"bs": {
+			"hp": 72,
+			"at": 140,
+			"df": 130,
+			"sa": 64,
+			"sd": 106,
+			"sp": 88
+		},
+		"w": 100,
+		"abilities": [""]
+	},
+	"Mega Dragalge": {
+		"t1": "Poison",
+		"t2": "Dragon",
+		"bs": {
+			"hp": 65,
+			"at": 85,
+			"df": 105,
+			"sa": 132,
+			"sd": 163,
+			"sp": 44
+		},
+		"w": 100.3,
+		"abilities": [""]
+	},
+	"Mega Hawlucha": {
+		"t1": "Fighting",
+		"t2": "Flying",
+		"bs": {
+			"hp": 78,
+			"at": 137,
+			"df": 100,
+			"sa": 74,
+			"sd": 93,
+			"sp": 118
+		},
+		"w": 25,
+		"abilities": [""]
+	},
+	"Mega Zygarde": {
+		"t1": "Dragon",
+		"t2": "Ground",
+		"bs": {
+			"hp": 216,
+			"at": 70,
+			"df": 91,
+			"sa": 216,
+			"sd": 85,
+			"sp": 100
+		},
+		"w": 610,
+		"abilities": [""]
+	},
+	"Mega Drampa": {
+		"t1": "Normal",
+		"t2": "Dragon",
+		"bs": {
+			"hp": 78,
+			"at": 85,
+			"df": 110,
+			"sa": 160,
+			"sd": 116,
+			"sp": 36
+		},
+		"w": 240.5,
+		"abilities": [""]
+	},
+	"Mega Zeraora": {
+		"t1": "Electric",
+		"bs": {
+			"hp": 88,
+			"at": 157,
+			"df": 75,
+			"sa": 147,
+			"sd": 80,
+			"sp": 153
+		},
+		"w": 44.5,
+		"abilities": [""]
+	},
+	"Mega Falinks": {
+		"t1": "Fighting",
+		"bs": {
+			"hp": 65,
+			"at": 135,
+			"df": 135,
+			"sa": 70,
+			"sd": 65,
+			"sp": 100
+		},
+		"w": 99,
+		"abilities": [""]
+	},
+	"Mega Raichu X": {
+		"t1": "Electric",
+		"bs": {
+			"hp": 60,
+			"at": 135,
+			"df": 95,
+			"sa": 90,
+			"sd": 95,
+			"sp": 110
+		},
+		"w": 38,
+		"abilities": [""]
+	},
+	"Mega Raichu Y": {
+		"t1": "Electric",
+		"bs": {
+			"hp": 60,
+			"at": 100,
+			"df": 55,
+			"sa": 160,
+			"sd": 80,
+			"sp": 130
+		},
+		"w": 26,
+		"abilities": [""]
+	},
+	"Mega Chimecho": {
+		"t1": "Psychic",
+		"t2": "Steel",
+		"bs": {
+			"hp": 75,
+			"at": 50,
+			"df": 110,
+			"sa": 135,
+			"sd": 120,
+			"sp": 65
+		},
+		"w": 8,
+		"abilities": [""]
+	},
+	"Mega Absol Z": {
+		"t1": "Dark",
+		"t2": "Ghost",
+		"bs": {
+			"hp": 65,
+			"at": 154,
+			"df": 60,
+			"sa": 75,
+			"sd": 60,
+			"sp": 151
+		},
+		"w": 49,
+		"abilities": [""]
+	},
+	"Mega Staraptor": {
+		"t1": "Fighting",
+		"t2": "Flying",
+		"bs": {
+			"hp": 85,
+			"at": 140,
+			"df": 100,
+			"sa": 60,
+			"sd": 90,
+			"sp": 110
+		},
+		"w": 50,
+		"abilities": [""]
+	},
+	"Mega Garchomp Z": {
+		"t1": "Dragon",
+		"bs": {
+			"hp": 108,
+			"at": 130,
+			"df": 85,
+			"sa": 141,
+			"sd": 85,
+			"sp": 151
+		},
+		"w": 99,
+		"abilities": [""]
+	},
+	"Mega Lucario Z": {
+		"t1": "Fighting",
+		"t2": "Steel",
+		"bs": {
+			"hp": 70,
+			"at": 100,
+			"df": 70,
+			"sa": 164,
+			"sd": 70,
+			"sp": 151
+		},
+		"w": 49.4,
+		"abilities": [""]
+	},
+	"Mega Golurk": {
+		"t1": "Ground",
+		"t2": "Ghost",
+		"bs": {
+			"hp": 89,
+			"at": 159,
+			"df": 105,
+			"sa": 70,
+			"sd": 105,
+			"sp": 55
+		},
+		"w": 330,
+		"abilities": [""]
+	},
+	"Mega Meowstic": {
+		"t1": "Psychic",
+		"bs": {
+			"hp": 74,
+			"at": 48,
+			"df": 76,
+			"sa": 143,
+			"sd": 101,
+			"sp": 124
+		},
+		"w": 10.1,
+		"abilities": [""]
+	},
+	"Mega Crabominable": {
+		"t1": "Fighting",
+		"t2": "Ice",
+		"bs": {
+			"hp": 97,
+			"at": 157,
+			"df": 122,
+			"sa": 62,
+			"sd": 107,
+			"sp": 33
+		},
+		"w": 252.8,
+		"abilities": [""]
+	},
+	"Mega Golisopod": {
+		"t1": "Bug",
+		"t2": "Steel",
+		"bs": {
+			"hp": 75,
+			"at": 150,
+			"df": 175,
+			"sa": 70,
+			"sd": 120,
+			"sp": 40
+		},
+		"w": 148,
+		"abilities": [""]
+	},
+	"Mega Magearna": {
+		"t1": "Steel",
+		"t2": "Fairy",
+		"bs": {
+			"hp": 80,
+			"at": 125,
+			"df": 115,
+			"sa": 170,
+			"sd": 115,
+			"sp": 95
+		},
+		"w": 248.1,
+		"abilities": [""]
+	},
+	"Mega Scovillain": {
+		"t1": "Grass",
+		"t2": "Fire",
+		"bs": {
+			"hp": 65,
+			"at": 138,
+			"df": 85,
+			"sa": 138,
+			"sd": 85,
+			"sp": 75
+		},
+		"w": 22,
+		"abilities": [""]
+	},
+	"Mega Baxcalibur": {
+		"t1": "Dragon",
+		"t2": "Ice",
+		"bs": {
+			"hp": 115,
+			"at": 175,
+			"df": 117,
+			"sa": 105,
+			"sd": 101,
+			"sp": 87
+		},
+		"w": 315,
+		"abilities": [""]
+	},
+	"Mega Tatsugiri": {
+		"t1": "Dragon",
+		"t2": "Water",
+		"bs": {
+			"hp": 68,
+			"at": 65,
+			"df": 90,
+			"sa": 135,
+			"sd": 125,
+			"sp": 92
+		},
+		"w": 24,
+		"abilities": [""]
+	},
+	"Mega Glimmora": {
+		"t1": "Rock",
+		"t2": "Poison",
+		"bs": {
+			"hp": 83,
+			"at": 90,
+			"df": 105,
+			"sa": 150,
+			"sd": 96,
+			"sp": 101
+		},
+		"w": 77,
+		"abilities": [""]
+	},
+	"Absol": { "formes": ["Absol", "Mega Absol", "Mega Absol Z"] },
+	"Garchomp": { "formes": ["Garchomp", "Mega Garchomp", "Mega Garchomp Z"] },
+	"Lucario": { "formes": ["Lucario", "Mega Lucario", "Mega Lucario Z"] },
+	"Raichu": { "formes": ["Raichu", "Mega Raichu X", "Mega Raichu Y"] },
+	"Zygarde": { "formes": ["Zygarde", "Zygarde-Complete", "Zygarde-10%", "Mega Zygarde"] }
+};
+// Populate the mega dexes with forme info
+for (let megaDex of [POKEDEX_MEGAS_ORAS, POKEDEX_MEGAS_LEGENDS_ZA]) {
+	for (let megaSpecies of Object.keys(megaDex)) {
+		if (!megaSpecies.startsWith("Mega ")) {
+			continue;
+		}
+		species = megaSpecies.substring(5);
+		if ([" X", " Y", " Z"].some(suffix => megaSpecies.endsWith(suffix))) {
+			species = species.substring(0, species.length - 2);
+		}
+		megaDex[megaSpecies].hasBaseForme = species;
+		if (!(species in megaDex)) {
+			megaDex[species] = { "formes": [species, megaSpecies] };
+		}
+	}
+}
 
 var POKEDEX_PRIMALS = {
 	"Groudon-Primal": {
@@ -18344,10 +18993,10 @@ let terapagosStellar = {
 
 // Add gen-specific formes to each pokedex
 // ideally for maintainability, all gen-specific formes can use objects like the above.
-$.extend(true, POKEDEX_XY, POKEDEX_MEGAS, POKEDEX_PRIMALS, floetteEternal);
-POKEDEX_XY["Mega Alakazam"].bs.sd = 95; // POKEDEX_MEGAS uses Mega Zam's gen 7 value
+$.extend(true, POKEDEX_XY, POKEDEX_MEGAS_ORAS, POKEDEX_PRIMALS, floetteEternal);
+POKEDEX_XY["Mega Alakazam"].bs.sd = 95; // POKEDEX_MEGAS_ORAS uses Mega Zam's gen 7 value
 
-$.extend(true, POKEDEX_SM, POKEDEX_SM_FORMES, POKEDEX_MEGAS, POKEDEX_PRIMALS, floetteEternal);
+$.extend(true, POKEDEX_SM, POKEDEX_SM_FORMES, POKEDEX_MEGAS_ORAS, POKEDEX_PRIMALS, floetteEternal);
 
 $.extend(true, POKEDEX_SS, POKEDEX_SS_FORMES);
 

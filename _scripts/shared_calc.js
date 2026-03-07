@@ -1020,22 +1020,21 @@ $(".forme").change(function () {
 	let abilityList = altForme.abilities;
 	prependSpeciesAbilities(abilityList, container.parent().parent().prop("id"), container.find(".ability"));
 
+	let ability = "";
 	if (setName !== BLANK_SET && pokemonName && setdexAll && setdexAll[pokemonName] && setdexAll[pokemonName][setName] &&
-		abilityList.includes(setdexAll[pokemonName][setName].ability)) {
+		abilityList && abilityList.includes(setdexAll[pokemonName][setName].ability)) {
 		// this pokemon comes from a defined set and the set specifies an ability
-		container.find(".ability").val(setdexAll[pokemonName][setName].ability);
+		ability = setdexAll[pokemonName][setName].ability;
 	} else if (abilityList && abilityList.length == 1) {
 		// the forme only has one ability
-		container.find(".ability").val(abilityList[0]);
+		ability = abilityList[0];
 	} else if (abilities.includes(altForme.ab)) {
 		// the pokedex specifies an ability for the forme
-		container.find(".ability").val(altForme.ab);
-	} else {
-		container.find(".ability").val("");
+		ability = altForme.ab;
 	}
-	container.find(".ability").change();
+	container.find(".ability").val(ability).change();
 
-	if (formeName.includes("Mega") && !formeName.includes("Rayquaza")) {
+	if (formeName.startsWith("Mega ") && !formeName.includes("Rayquaza")) {
 		container.find(".item").val("").keyup();
 		//container.find(".item").prop("disabled", true);
 		//edited out by squirrelboy1225 for doubles!
