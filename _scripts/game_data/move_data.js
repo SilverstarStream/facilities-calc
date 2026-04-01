@@ -1809,7 +1809,7 @@ var MOVES_ADV = $.extend(true, {}, MOVES_GSC, {
 		"type": "Normal",
 		"category": "Physical",
 		"hasSecondaryEffect": true,
-		"acc": 90
+		"acc": 100
 	},
 	"Shadow Punch": {
 		"bp": 60,
