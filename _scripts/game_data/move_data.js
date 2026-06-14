@@ -1387,6 +1387,14 @@ var MOVES_ADV = $.extend(true, {}, MOVES_GSC, {
 		"isWind": true,
 		"acc": 95
 	},
+	"Arm Thrust": {
+		"bp": 15,
+		"type": "Fighting",
+		"category": "Physical",
+		"makesContact": true,
+		"maxMultiHits": 5,
+		"acc": 100
+	},
 	"Astonish": {
 		"bp": 30,
 		"type": "Ghost",
@@ -3329,14 +3337,6 @@ var MOVES_BW = $.extend(true, {}, MOVES_DPP, {
 
 var MOVES_XY = $.extend(true, {}, MOVES_BW, {
 	"Air Cutter": {"bp": 60},
-	"Arm Thrust": {
-		"bp": 15,
-		"type": "Fighting",
-		"category": "Physical",
-		"makesContact": true,
-		"maxMultiHits": 5,
-		"acc": 100
-	},
 	"Aromatic Mist": {
 		"bp": 0,
 		"type": "Fairy"
