@@ -137,10 +137,10 @@ function setKOChanceText(result, move, moveHits, attacker, defender, field, dama
 	// 5+HKO. Assume that any held berry will be/has been eaten.
 	for (let hitCount = DETAILED_UPPER_HIT_LIMIT + 1; hitCount <= UPPER_HIT_LIMIT; hitCount++) {
 		// even though it's easy to give an accurate chance of a 5+HKO with damage maps, keep the output text simple.
-		if (checkHPThreshold(0, firstHitDamageInfo.min + damageInfo.min * (hitCount - 1), hitCount)) {
+		if (checkHPThreshold(0, firstHitDamageInfo.min + damageInfo.min * (hitCount - 1) - berryRecovery, hitCount)) {
 			setResultText(result, move, hitCount, moveAccuracy, GUARANTEED, false, hazardText, berryText);
 			return;
-		} else if (checkHPThreshold(0, firstHitDamageInfo.max + damageInfo.max * (hitCount - 1), hitCount)) {
+		} else if (checkHPThreshold(0, firstHitDamageInfo.max + damageInfo.max * (hitCount - 1) - berryRecovery, hitCount)) {
 			setResultText(result, move, hitCount, moveAccuracy, 0, false, hazardText, berryText);
 			return;
 		}
@@ -296,7 +296,7 @@ function calculateNHKO(upperHitCount, damageInfo, firstHitDamageInfo, isCheckMul
 		let turnCount = isCheckMultihitOHKO ? 1 : hitCount;
 		let previousTurnsEot = accumulatedEOT(turnCount - 1);
 		// check for an outright guaranteed KO
-		if (checkHPThreshold(0, firstHitDamageInfo.min + damageInfo.min * (hitCount - 1) - previousTurnsEot - berryRecovery, turnCount)) {
+		if (checkHPThreshold(0, firstHitDamageInfo.min + damageInfo.min * (hitCount - 1) - berryRecovery, turnCount)) {
 			return {
 				hitCount: hitCount,
 				koCombinations: GUARANTEED,

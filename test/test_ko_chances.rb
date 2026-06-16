@@ -268,7 +268,6 @@ class KoChanceTestCase < CalcTest
 			# possible 5HKO: [40 * 5 = 200] < 236 <= [48 * 5 = 240]
 			expectedResult = "40-48 (21.2 - 25.4%) -- possible 5HKO after Sitrus Berry recovery"
 		end
-		# TODO: fix the calc behavior so this test passes for Sitrus
 		assertIncludes("#mainResult", END_WITH, expectedResult)
 
 		selectSet(2, "Kommo-o-RS") # 142 HP
@@ -282,9 +281,8 @@ class KoChanceTestCase < CalcTest
 		elsif (item == SITRUS_BERRY)
 			# 177 effective HP w/ Sitrus
 			# possible 6HKO: [29 * 6 = 174] < 177 <= [34 * 6 = 204]
-			expectedResult = "29-34 (16.4 - 19.2%) -- possible 6HKO after Sitrus Berry recovery"
+			expectedResult = "29-34 (20.4 - 23.9%) -- possible 6HKO after Sitrus Berry recovery"
 		end
-		# TODO: fix the calc behavior so this test passes for Sitrus
 		assertIncludes("#mainResult", END_WITH, expectedResult)
 
 		selectSet(2, "Gigalith-RS") # 152 HP
@@ -300,7 +298,6 @@ class KoChanceTestCase < CalcTest
 			# possible 6HKO: [27 * 6 = 162] < 190 <= [33 * 6 = 198]
 			expectedResult = "27-33 (17.8 - 21.7%) -- possible 6HKO after Sitrus Berry recovery"
 		end
-		# TODO: fix the calc behavior so this test passes for Sitrus
 		assertIncludes("#mainResult", END_WITH, expectedResult)
 	end
 
@@ -402,7 +399,6 @@ class KoChanceTestCase < CalcTest
 			# possible 3HKO: [51 * 3 = 153] < 168 <= [60 * 3 = 180]
 			expectedResult = "51-60 (25 - 29.4%) -- 30.1% chance to 3HKO after hail damage"
 		end
-		# TODO: fix the calc behavior so this test passes for hail (no leftovers)
 		assertIncludes("#mainResult", END_WITH, expectedResult)
 
 		setWeather("clear")
@@ -417,9 +413,8 @@ class KoChanceTestCase < CalcTest
 		else
 			# 163 effective HP w/ 3 turns of Hail
 			# possible 3HKO: [48 * 3 = 144] < 163 <= [57 * 3 = 171]
-			expectedResult = "48-57 (24.1 - 28.6%) -- 87.1% chance to 3HKO after hail damage"
+			expectedResult = "48-57 (24.1 - 28.6%) -- 8.9% chance to 3HKO after hail damage"
 		end
-		# TODO: fix the calc behavior so this test passes for hail (no leftovers)
 		assertIncludes("#mainResult", END_WITH, expectedResult)
 
 		setWeather("clear")
@@ -448,9 +443,9 @@ class KoChanceTestCase < CalcTest
 			# guaranteed 5HKO: 178 <= [36 * 5 = 180]
 			expectedResult = "36-43 (19 - 22.8%) -- guaranteed 5HKO after hail damage and Leftovers recovery"
 		else
-			# 134 effective HP w/ 5 turns of Hail
-			# guaranteed 4HKO: 134 <= [36 * 4 = 144]
-			expectedResult = "36-43 (19 - 22.8%) -- guaranteed 4HKO after hail damage"
+			# 145 effective HP w/ 4 turns of Hail
+			# guaranteed 4HKO: [36 * 4 = 144] < 145 <= [43 * 4 = 172]
+			expectedResult = "36-43 (19 - 22.8%) -- 100% chance to 4HKO after hail damage"
 		end
 		assertIncludes("#mainResult", END_WITH, expectedResult)
 	end
@@ -651,12 +646,13 @@ class KoChanceTestCase < CalcTest
 		refute(find("#mainResult").text.include?("Parental Bond"))
 		refute(find("#damageValues").text.include?("First hit"))
 
-		# TODO fix this behavior then flesh out this test case
 		# Drain Punch
 		find("#p1 .move4 .select2-container.move-selector").click
 		find("li.select2-result", text: "Drain Punch").click
 		selectSet(2, "Houndoom-3")
-		refute(find("#mainResult").text.include?("recovers 75-70"))
+		assertIncludes("#mainResult", INCLUDE, "recovers 75 (35.5%)")
+		setAttackBoost(-1)
+		assertIncludes("#mainResult", INCLUDE, "recovers 56-66 (26.5 - 31.3%)")
 	end
 
 	def test_meteor_beam
