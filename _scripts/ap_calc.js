@@ -335,18 +335,16 @@ function setUpRecoilRecoveryText(result, attacker, defender, move, minDamage, ma
 				minHealthRecovered = Math.round(minParentDamage * healingMultiplier) + Math.round(Math.min(minChildDamage, defCurHP - minParentDamage) * healingMultiplier);
 			}
 			// get max recovery
+			let highestOddParent = 0;
 			if (defCurHP % 2 == 0) {
 				// edge case where hitting optimal damage rolls to KO an even-HP defender maximizes recovery due to recovery values using normal rounding
 				let highestOddParent = maxParentDamage;
 				for (let i = result.damage.length - 2; highestOddParent % 2 == 1 && i >= 0; i--) {
 					highestOddParent = result.damage[i];
 				}
-				if (highestOddParent % 2 == 1 && highestOddParent + maxChildDamage >= defCurHP) {
-					maxHealthRecovered = Math.round(defCurHP * healingMultiplier) + 1;
-				} else {
-					maxHealthRecovered = Math.round(Math.min(maxParentDamage, defCurHP) * healingMultiplier) +
-					Math.round(Math.min(maxChildDamage, defCurHP - maxParentDamage) * healingMultiplier);
-				}
+			}
+			if (highestOddParent % 2 == 1 && highestOddParent + maxChildDamage >= defCurHP) {
+				maxHealthRecovered = Math.round(defCurHP * healingMultiplier) + 1;
 			} else {
 				maxHealthRecovered = Math.round(Math.min(maxParentDamage, defCurHP) * healingMultiplier);
 				if (maxParentDamage < defCurHP) {
