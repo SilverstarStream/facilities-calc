@@ -95,14 +95,14 @@ var savecustom = function () {
 		9    - Move Name
 		    */
 
-		if (lines[0].indexOf("(M)") != -1) {
+		if (lines[0].includes("(M)")) {
 			lines[0] = lines[0].substring(0, lines[0].indexOf("(M)") - 1) +
 		        lines[0].substring(lines[0].indexOf("(M)") + 3, lines[0].length);
-		} else if (lines[0].indexOf("(F)") != -1) {
+		} else if (lines[0].includes("(F)")) {
 			lines[0] = lines[0].substring(0, lines[0].indexOf("(F)")) +
 		        lines[0].substring(lines[0].indexOf("(F)") + 3, lines[0].length);
 		}
-		if (lines[0].indexOf("(") != -1) {
+		if (lines[0].includes("(")) {
 			firstParenth = lines[0].lastIndexOf("(");
 			lastParenth = lines[0].lastIndexOf(")");
 			species = lines[0].substring(firstParenth + 1, lastParenth).trim();
@@ -159,82 +159,38 @@ var savecustom = function () {
 			species = baseForme;
 		}
 
-		if (lines[0].indexOf("@") != -1)
+		if (lines[0].includes("@"))
 			item = lines[0].substring(lines[0].indexOf("@") + 1).trim(); //item is always after @
 			if (oldItemNames[item]) {
 				item = oldItemNames[item]; // if the item has an old name, convert it to the new name
 			}
 		if (lines.length > 1) {
-			for (var i = 1; i < lines.length; ++i) {
-				if (lines[i].indexOf("Ability") != -1) {
-					ability = lines[i].substring(lines[i].indexOf(" ") + 1).trim();
+			for (let i = 1; i < lines.length; i++) {
+				let line = lines[i].trim();
+				if (line.includes("Ability")) {
+					ability = line.substring(line.indexOf(" ") + 1).trim();
 				}
-				if (lines[i].indexOf("Tera Type") != -1) {
-					teraType = lines[i].split(":")[1].trim();
+				else if (line.includes("Tera Type")) {
+					teraType = line.split(":")[1].trim();
 				}
-				if (lines[i].indexOf("Level") != -1) {
-					level = lines[i].split(" ")[1].trim(); //level is sometimes third but uh not always
+				else if (line.includes("Level")) {
+					level = line.split(" ")[1].trim(); //level is sometimes third but uh not always
 				}
-				if (lines[i].indexOf("EVs") != -1) { //If EVs are in this line
-					evList = lines[i].split(":")[1].split("/"); //splitting it into a list of " # Stat "
-					for (var j = 0; j < evList.length; ++j) {
-						evList[j] = evList[j].trim();
-						evListElements = evList[j].split(" ");
-						if (evListElements[1] == "HP") {
-							EVs[0] = parseInt(evListElements[0]);
-						}	else {
-							if (evListElements[1] == "Atk") {
-								EVs[1] = parseInt(evListElements[0]);
-							} else {
-								if (evListElements[1] == "Def") {
-									EVs[2] = parseInt(evListElements[0]);
-								} else {
-									if (evListElements[1] == "SpA") {
-										EVs[3] = parseInt(evListElements[0]);
-									} else {
-										if (evListElements[1] == "SpD") {
-											EVs[4] = parseInt(evListElements[0]);
-										} else {
-											if (evListElements[1] == "Spe") {
-												EVs[5] = parseInt(evListElements[0]);
-											}
-										}
-									}
-								}
-							}
-						}
-					}
+				else if (line.includes("EVs")) { //If EVs are in this line
+					getStatValues(EVs, line);
 				}
-				if (lines[i].indexOf("IVs") != -1) { //if EVs are in this line
-					ivList = lines[i].split(":")[1].split("/"); //splitting it into a list of " # Stat "
-					for (var j = 0; j < ivList.length; ++j) {
-						ivList[j] = ivList[j].trim();
-						ivListElements = ivList[j].split(" ");
-						if (ivListElements[1] == "HP")
-							IVs[0] = parseInt(ivListElements[0]);
-						else if (ivListElements[1] == "Atk")
-							IVs[1] = parseInt(ivListElements[0]);
-						else if (ivListElements[1] == "Def")
-							IVs[2] = parseInt(ivListElements[0]);
-						else if (ivListElements[1] == "SpA")
-							IVs[3] = parseInt(ivListElements[0]);
-						else if (ivListElements[1] == "SpD")
-							IVs[4] = parseInt(ivListElements[0]);
-						else if (ivListElements[1] == "Spe")
-							IVs[5] = parseInt(ivListElements[0]);
-					}
-
+				else if (line.includes("IVs")) { //if IVs are in this line
+					getStatValues(IVs, line);
 				}
-				if (lines[i].indexOf("Nature") != -1) { //if nature is in this line
-					nature = lines[i].split(" ")[0].trim();
-				}
-				if (lines[i].indexOf("- ") != -1) { //if there is a move in this line
-					var nextMove = lines[i].substring(lines[i].indexOf(" ") + 1).trim();
+				else if (line.includes("- ")) { //if there is a move in this line
+					var nextMove = line.substring(line.indexOf(" ") + 1).trim();
 					nextMove = nextMove.replace("[", "");
 					nextMove = nextMove.replace("]", "");
 					moves.push(nextMove);
 				}
-
+				else if (line.includes("Nature")) { //if nature is in this line
+					nature = line.split(" ")[0].trim();
+				}
 			}
 		}
 
@@ -286,6 +242,26 @@ var savecustom = function () {
 	// due to updating the dexes, refreshing shouldn't be necessary
 	//alert("Please refresh your page to get your custom sets to show up!");
 };
+
+// change the passed in statValuesList
+function getStatValues(statValuesList, line) {
+	valueList = line.split(":")[1].split("/"); //splitting it into a list of " # Stat "
+	for (let i = 0; i < valueList.length; i++) {
+		listElements = valueList[i].trim().split(" ");
+		if (listElements[1] == "HP")
+			statValuesList[0] = parseInt(listElements[0]);
+		else if (listElements[1] == "Atk")
+			statValuesList[1] = parseInt(listElements[0]);
+		else if (listElements[1] == "Def")
+			statValuesList[2] = parseInt(listElements[0]);
+		else if (listElements[1] == "SpA")
+			statValuesList[3] = parseInt(listElements[0]);
+		else if (listElements[1] == "SpD")
+			statValuesList[4] = parseInt(listElements[0]);
+		else if (listElements[1] == "Spe")
+			statValuesList[5] = parseInt(listElements[0]);
+	}
+}
 
 function rejectSet(species, spreadName) {
 	if (!pokedex[species]) {

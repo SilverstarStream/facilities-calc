@@ -75,6 +75,21 @@ IVs: 0 Atk / 30 Def
 		assert_nil(page.evaluate_script("SETDEX_CUSTOM['Zapdos']"))
 	end
 
+	def test_import_nature_power
+		loadCustomSet(%q{Ludicolo NP (Ludicolo) @ Leftovers
+Bold Nature
+EVs: 170 HP / 170 Def / 170 SpD
+- Nature Power
+- Rain Dance
+- Double Team
+- Toxic})
+
+		selectSet(1, "Ludicolo (Ludicolo NP)")
+
+		assert_equal("Bold",
+			find("#p1 .nature").value)
+	end
+
 	def test_export_megas
 		find(:xpath, './/label[@for="game7"]').click
 
