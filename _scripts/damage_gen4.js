@@ -96,8 +96,9 @@ function getDamageResultPtHGSS(attacker, defender, move, field) {
 	attackerGrounded = isGrounded(attacker, field);
 	defenderGrounded = isGrounded(defender, field);
 
-	var typeEffect1 = getMoveEffectiveness(move, moveType, defender.type1, attacker.ability === "Scrappy", field);
-	var typeEffect2 = defender.type2 ? getMoveEffectiveness(move, moveType, defender.type2, attacker.ability === "Scrappy", field) : 1;
+	let effectivenessOrderedTypes = getOrderedTypes(defender);
+	var typeEffect1 = getMoveEffectiveness(move, moveType, effectivenessOrderedTypes[0], attacker.ability === "Scrappy", field);
+	var typeEffect2 = defender.type2 ? getMoveEffectiveness(move, moveType, effectivenessOrderedTypes[1], attacker.ability === "Scrappy", field) : 1;
 	var typeEffectiveness = typeEffect1 * typeEffect2;
 
 	if (moveType === "Ground" && defender.hasType("Flying") && defenderGrounded) {
@@ -535,4 +536,35 @@ function getTripleKickDamage(getDamageResultFunction, attacker, defender, move, 
 	isFirstHit = true;
 	move.bp = startingBP;
 	return damageArrays;
+}
+
+// this ordering is also used in gen 3
+const TYPE_EFFECTIVENESS_PRECEDENCE = [
+	"Normal",
+	"Fire",
+	"Water",
+	"Electric",
+	"Grass",
+	"Ice",
+	"Fighting",
+	"Poison",
+	"Ground",
+	"Flying",
+	"Psychic",
+	"Bug",
+	"Rock",
+	"Ghost",
+	"Dragon",
+	"Dark",
+	"Steel"
+];
+
+function getOrderedTypes(defender) {
+	if (!defender.type2) {
+		return [ defender.type1, "" ];
+	}
+	if (TYPE_EFFECTIVENESS_PRECEDENCE.indexOf(defender.type1) > TYPE_EFFECTIVENESS_PRECEDENCE.indexOf(defender.type2)) {
+		return [ defender.type2, defender.type1 ];
+	}
+	return [ defender.type1, defender.type2 ];
 }
