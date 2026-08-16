@@ -47,6 +47,11 @@ function getDamageResultPtHGSS(attacker, defender, move, field) {
 		"defenderName": getDescriptionPokemonName(defender)
 	};
 
+	if (attacker.ability === "Mold Breaker") {
+		defender.curAbility = "";
+		//description.attackerAbility = attacker.ability;
+	}
+
 	if (killsShedinja(attacker, defender, move)) {
 		return {"damage": [1], "description": buildDescription(description)};
 	}
@@ -55,11 +60,6 @@ function getDamageResultPtHGSS(attacker, defender, move, field) {
 	}
 
 	let moveType = move.type;
-
-	if (attacker.ability === "Mold Breaker") {
-		defender.curAbility = "";
-		//description.attackerAbility = attacker.ability;
-	}
 
 	var isCritical = move.isCrit && !["Battle Armor", "Shell Armor"].includes(defender.curAbility);
 
@@ -96,10 +96,14 @@ function getDamageResultPtHGSS(attacker, defender, move, field) {
 	attackerGrounded = isGrounded(attacker, field);
 	defenderGrounded = isGrounded(defender, field);
 
-	let effectivenessOrderedTypes = getOrderedTypes(defender);
-	var typeEffect1 = getMoveEffectiveness(move, moveType, effectivenessOrderedTypes[0], attacker.ability === "Scrappy", field);
-	var typeEffect2 = defender.type2 ? getMoveEffectiveness(move, moveType, effectivenessOrderedTypes[1], attacker.ability === "Scrappy", field) : 1;
+	var typeEffect1 = getMoveEffectiveness(move, moveType, defender.type1, attacker.ability === "Scrappy", field);
+	var typeEffect2 = defender.type2 ? getMoveEffectiveness(move, moveType, defender.type2, attacker.ability === "Scrappy", field) : 1;
 	var typeEffectiveness = typeEffect1 * typeEffect2;
+	if (reorderTypeEffectiveness(defender)) {
+		let temp = typeEffect1;
+		typeEffect1 = typeEffect2;
+		typeEffect2 = temp;
+	}
 
 	if (moveType === "Ground" && defender.hasType("Flying") && defenderGrounded) {
 		// Defending gen 4 Iron Ball Flying types always treat their Flying type as 1x with Ground attacks
@@ -538,7 +542,7 @@ function getTripleKickDamage(getDamageResultFunction, attacker, defender, move, 
 	return damageArrays;
 }
 
-// this ordering is also used in gen 3
+// in gens 3 and 4, type effectiveness is applied in this list's order.
 const TYPE_EFFECTIVENESS_PRECEDENCE = [
 	"Normal",
 	"Fire",
@@ -559,12 +563,6 @@ const TYPE_EFFECTIVENESS_PRECEDENCE = [
 	"Steel"
 ];
 
-function getOrderedTypes(defender) {
-	if (!defender.type2) {
-		return [ defender.type1, "" ];
-	}
-	if (TYPE_EFFECTIVENESS_PRECEDENCE.indexOf(defender.type1) > TYPE_EFFECTIVENESS_PRECEDENCE.indexOf(defender.type2)) {
-		return [ defender.type2, defender.type1 ];
-	}
-	return [ defender.type1, defender.type2 ];
+function reorderTypeEffectiveness(defender) {
+	return defender.type2 && TYPE_EFFECTIVENESS_PRECEDENCE.indexOf(defender.type1) > TYPE_EFFECTIVENESS_PRECEDENCE.indexOf(defender.type2);
 }

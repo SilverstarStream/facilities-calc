@@ -199,7 +199,7 @@ function getDamageResult(attacker, defender, move, field) {
 	// If the move is a Max move, it already had its type changed in shared_calc (so that the move's name changes) and won't receive this boost. This is correct behavior.
 	// Z-Moves don't receive -ate type changes
 	if (!move.isZ && !move.isMax) {
-		let applicableNormalMove = moveType === "Normal" && move.name !== "Revelation Dance" && !(move.name === "Tera Blast" && attacker.isTerastal); // Raging Bull could be here
+		let applicableNormalMove = moveType === "Normal" && move.name !== "Revelation Dance" && !(move.name === "Tera Blast" && attacker.isTerastal);
 		if (applicableNormalMove && attacker.curAbility === "Aerilate") {
 			moveType = "Flying";
 			ateizeBoost = true;
@@ -233,12 +233,12 @@ function getDamageResult(attacker, defender, move, field) {
 		makesContact = false;
 	}
 
-	let scrappy = ["Scrappy", "Mind's Eye"].includes(attacker.curAbility);
-	let typeEffect1 = getMoveEffectiveness(move, moveType, defender.type1, scrappy, field, field.weather === "Strong Winds", description);
-	let typeEffect2 = defender.type2 ? getMoveEffectiveness(move, moveType, defender.type2, scrappy, field, field.weather === "Strong Winds", description) : 1;
+	let isScrappy = ["Scrappy", "Mind's Eye"].includes(attacker.curAbility);
+	let typeEffect1 = getMoveEffectiveness(move, moveType, defender.type1, isScrappy, field, field.weather === "Strong Winds", description);
+	let typeEffect2 = defender.type2 ? getMoveEffectiveness(move, moveType, defender.type2, isScrappy, field, field.weather === "Strong Winds", description) : 1;
 	let typeEffectiveness = typeEffect1 * typeEffect2;
 
-	// A Flying-type holding an Iron Ball or hit by Thousand Arrows treats Ground attacks as neutral.
+	// A Flying-type holding an Iron Ball or hit by Thousand Arrows treats Ground attacks as neutral, regardless of the other type.
 	// However, Gravity causes Ground attacks to calculate effectiveness as though Flying is 1x
 	if (moveType === "Ground" && defender.hasType("Flying") && (defenderGrounded || move.name === "Thousand Arrows")) {
 		if (field.isGravity) {
@@ -570,13 +570,10 @@ function calcBP(attacker, defender, move, field, description, ateizeBoost) {
 		attacker.curAbility === "Analytic" && attacker.isAbilityActivated ||
 		attacker.curAbility === "Tough Claws" && makesContact ||
 		gen == 6 && ateizeBoost ||
-		attacker.curAbility === "Punk Rock" && move.isSound) {
+		attacker.curAbility === "Punk Rock" && move.isSound ||
+		attacker.curAbility === "Sand Force" && field.weather === "Sand" && ["Rock", "Ground", "Steel"].includes(moveType)) {
 		bpMods.push(0x14CD);
 		description.attackerAbility = attacker.curAbility;
-	} else if (attacker.curAbility === "Sand Force" && field.weather === "Sand" && ["Rock", "Ground", "Steel"].indexOf(moveType) !== -1) {
-		bpMods.push(0x14CD);
-		description.attackerAbility = attacker.curAbility;
-		description.weather = field.weather;
 	}
 
 	if (attacker.curAbility === "Supreme Overlord" && field.faintedCount > 0) {
@@ -804,7 +801,7 @@ function calcAtk(attacker, defender, move, field, description) {
 		attacker.item === "Choice Specs" && moveCategory === "Special" && !move.isZ && !attacker.isDynamax) {
 		atMods.push(0x1800);
 		description.attackerItem = attacker.item;
-	} else if (attacker.item === "Thick Club" && (attacker.name === "Cubone" || attacker.name === "Marowak" || attacker.name === "Marowak-Alola") && moveCategory === "Physical" ||
+	} else if (attacker.item === "Thick Club" && ["Cubone", "Marowak", "Marowak-Alola"].includes(attacker.name) && moveCategory === "Physical" ||
 		attacker.item === "Deep Sea Tooth" && attacker.name === "Clamperl" && moveCategory === "Special" ||
 		attacker.item === "Light Ball" && attacker.name === "Pikachu" && !move.isZ) {
 		atMods.push(0x2000);
@@ -1032,7 +1029,7 @@ function calcFinalMods(attacker, defender, move, field, description, typeEffecti
 		finalMods.push(0x2000);
 		description.isMinimized = true;
 	}
-	if ((move.name === "Dynamax Cannon" || move.name === "Behemoth Blade" || move.name === "Behemoth Bash") && defender.isDynamax) {
+	if (["Dynamax Cannon", "Behemoth Blade", "Behemoth Bash"].includes(move.name) && defender.isDynamax) {
 		finalMods.push(0x2000);
 	}
 	if (typeEffectiveness > 1 && (move.name === "Collision Course" || move.name === "Electro Drift")) {
@@ -1515,7 +1512,8 @@ function killsShedinja(attacker, defender, move, field = {}) {
 	(attacker.item === "Black Sludge" && !defender.hasType("Poison")));
 	let confusion = ["Confuse Ray", "Flatter", "Supersonic", "Swagger", "Sweet Kiss", "Teeter Dance"].includes(move.name);
 	let otherPassive = (move.name === "Leech Seed" && !defender.hasType("Grass")) || (move.name === "Curse" && attacker.hasType("Ghost"));
-	return weather || poison || burn || dangerItem || confusion || otherPassive;
+	let suppressAbility = ["Skill Swap", "Worry Seed", "Entrainment", "Simple Beam", "Gastro Acid"].includes(move.name) && defender.item !== "Ability Shield";
+	return weather || poison || burn || dangerItem || confusion || otherPassive || suppressAbility;
 }
 
 function getSingletonDamage(attacker, defender, move, field, description) {
