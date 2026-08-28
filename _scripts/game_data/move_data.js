@@ -247,6 +247,14 @@ var MOVES_RBY = {
 		"bp": 0,
 		"type": "Normal"
 	},
+	"Fury Attack": {
+		"bp": 15,
+		"type": "Normal",
+		"category": "Physical",
+		"makesContact": true,
+		"maxMultiHits": 5,
+		"acc": 85
+	},
 	"Fury Swipes": {
 		"bp": 18,
 		"type": "Normal",
