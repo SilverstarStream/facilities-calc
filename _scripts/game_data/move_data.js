@@ -4481,7 +4481,7 @@ var MOVES_SS = $.extend(true, {}, MOVES_SM, {
 		"bp": 50,
 		"type": "Dragon",
 		"category": "Physical",
-		"isTwoHit": true,
+		"maxMultiHits": 2,
 		"acc": 100
 	},
 	"Bolt Beak": {

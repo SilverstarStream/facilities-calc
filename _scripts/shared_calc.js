@@ -37,16 +37,14 @@ $(".max-level").bind("keyup change", function () {
 });
 
 $("#maxL").change(function () {
-	if (this.checked) {
-		for (var i = 0; i < 4; i++) {
-			$("#maxL" + (i + 1)).prop("checked", true);
-		}
-	} else {
-		for (var i = 0; i < 4; i++) {
-			$("#maxL" + (i + 1)).prop("checked", false);
-		}
-	}
+	applyMaxMoveProperty("L", this.checked);
 });
+
+function applyMaxMoveProperty(side, isChecked) {
+	for (let i = 1; i <= 4; i++) {
+		$("#max" + side + i).prop("checked", isChecked);
+	}
+}
 
 $("#wpL").change(function () {
 	applyWeaknessPolicy(1, !this.checked);
@@ -222,10 +220,16 @@ function isCustomSet(pokeName) {
 
 $("#format").change(function () {
 	localStorage.setItem("selectedFormat", $("input:radio[name='format']:checked").val().toLowerCase());
+	autoSetMultiHits($("#p1"));
+	let p2 = $("#p2");
+	if (p2) {
+		autoSetMultiHits(p2);
+		calculate();
+	}
 });
 
 $(".level").bind("keyup change", function () {
-	var poke = $(this).closest(".poke-info");
+	let poke = $(this).closest(".poke-info");
 	calcHP(poke);
 	calcStats(poke);
 });
@@ -734,17 +738,26 @@ function autoSetMultiHits(pokeInfo) {
 	}
 }
 
+const DEFAULT_MOVE_HITS = 3;
 function getDefaultMultiHits(moveName, ability, item) {
 	let move = moves[moveName];
 	if (!move || !move.maxMultiHits) {
 		return 1;
 	}
+	if (moveName === "Dragon Darts") {
+		console.log("Dragon Darts getDefaultMultiHits()");
+		return $("input:radio[name='format']:checked").val().toLowerCase() === "doubles" ? 1 : move.maxMultiHits;
+	}
 	if (ability === "Skill Link" || ["Triple Kick", "Triple Axel", "Population Bomb"].includes(moveName)) {
 		return move.maxMultiHits;
-	} else if (item === "Loaded Dice") {
+	}
+	if (item === "Loaded Dice" && move.maxMultiHits >= 4) {
 		return 4;
 	}
-	return 3;
+	if (move.maxMultiHits < DEFAULT_MOVE_HITS) {
+		return move.maxMultiHits;
+	}
+	return DEFAULT_MOVE_HITS;
 }
 
 $(".status").bind("keyup change", function () {
@@ -757,9 +770,9 @@ $(".status").bind("keyup change", function () {
 });
 
 $(".move-selector").change(function () {
-	var moveName = $(this).val();
-	var move = moves[moveName] || moves["(No Move)"];
-	var moveGroupObj = $(this).parent();
+	let moveName = $(this).val();
+	let move = moveName in moves ? moves[moveName] : moves["(No Move)"];
+	let moveGroupObj = $(this).parent();
 	let pokeInfo = $(this).closest(".poke-info");
 	let ability = pokeInfo.find(".ability").val();
 	moveGroupObj.children(".move-bp").val(move.bp);
@@ -767,11 +780,14 @@ $(".move-selector").change(function () {
 	moveGroupObj.children(".move-cat").val(move.category);
 	let forceCrit = move.alwaysCrit || (!isNeutralizingGas && ability === "Merciless" && move.category && $(".status")[pokeInfo.prop("id") == "p1" ? 1 : 0].value.endsWith("Poisoned"));
 	moveGroupObj.children(".move-crit").prop("checked", forceCrit);
-	var moveHits = moveGroupObj.children(".move-hits");
+	let moveHits = moveGroupObj.children(".move-hits");
 	moveHits.empty();
-	var maxMultiHits = move.maxMultiHits;
-	if (maxMultiHits && !move.isMax) {
-		for(var i = 2; i <= maxMultiHits; i++) {
+	let maxMultiHits = move.maxMultiHits;
+	if (maxMultiHits && !move.isZ && !move.isMax) {
+		if (moveName == "Dragon Darts") {
+			moveHits.append($("<option></option>").attr("value", 1).text("1 hit"));
+		}
+		for(let i = 2; i <= maxMultiHits; i++) {
 			moveHits.append($("<option></option>").attr("value", i).text(i + " hits"));
 		}
 		moveHits.show();
