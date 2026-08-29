@@ -942,6 +942,7 @@ function calcSTABMod(attacker, move, description) {
 			// return standard STAB when not calcing the first hit for Stellar hits - except Terapagos
 			return attacker.hasType(moveType) ? 0x1800 : 0x1000;
 		}
+		description.attackerTeraFirstHit = getFirstHitText(ATTACK_TEXT, move.hits);
 		return attacker.hasType(moveType) ? 0x2000 : 0x1333; // https://www.smogon.com/forums/threads/scarlet-violet-battle-mechanics-research.3709545/post-9894284
 	}
 	let stabMod = 0x1000;
@@ -1244,6 +1245,7 @@ function buildDescription(description) {
 	}
 	if (description.attackerTera) {
 		output += "Tera " + description.attackerTera + " ";
+		output = appendIfSet(output, description.attackerTeraFirstHit);
 	}
 	output += description.attackerName + " ";
 	if (description.isHelpingHand) {
@@ -1502,14 +1504,14 @@ function killsShedinja(attacker, defender, move, field = {}) {
 	let burnable = afflictable && !defender.hasType("Fire");
 
 	let weather = defender.item !== "Safety Goggles" &&
-	((move.name === "Sandstorm" && !["Rock", "Steel", "Ground"].some(type => defender.hasType(type))) || (move.name === "Hail" && !defender.hasType("Ice")));
+		((move.name === "Sandstorm" && !["Rock", "Steel", "Ground"].some(type => defender.hasType(type))) || (move.name === "Hail" && !defender.hasType("Ice")));
 	// akin to Sash, status berries should not be accounted for
 	let poison = (["Toxic", "Poison Gas", "Toxic Thread"].includes(move.name) || (move.name === "Poison Powder" && defender.item !== "Safety Goggles" && !defender.hasType("Grass"))) &&
-	(poisonable || (afflictable && attacker.curAbility === "Corrosion"));
+		(poisonable || (afflictable && attacker.curAbility === "Corrosion"));
 	let burn = move.name === "Will-O-Wisp" && burnable;
 	let dangerItem = (["Trick", "Switcheroo"].includes(move.name) || (move.name === "Bestow" && defender.item === "")) &&
-	(attacker.item === "Sticky Barb" || (attacker.item === "Toxic Orb" && poisonable) || (attacker.item === "Flame Orb" && burnable) ||
-	(attacker.item === "Black Sludge" && !defender.hasType("Poison")));
+		(attacker.item === "Sticky Barb" || (attacker.item === "Toxic Orb" && poisonable) || (attacker.item === "Flame Orb" && burnable) ||
+		(attacker.item === "Black Sludge" && !defender.hasType("Poison")));
 	let confusion = ["Confuse Ray", "Flatter", "Supersonic", "Swagger", "Sweet Kiss", "Teeter Dance"].includes(move.name);
 	let otherPassive = (move.name === "Leech Seed" && !defender.hasType("Grass")) || (move.name === "Curse" && attacker.hasType("Ghost"));
 	let suppressAbility = ["Skill Swap", "Worry Seed", "Entrainment", "Simple Beam", "Gastro Acid"].includes(move.name) && defender.item !== "Ability Shield";
@@ -1525,7 +1527,7 @@ function getSingletonDamage(attacker, defender, move, field, description) {
 			singletonDamageValue = attacker.level;
 			break;
 		case "Psywave":
-			singletonDamageValue = attacker.level * 150 / 100;
+			singletonDamageValue = Math.floor(attacker.level * 150 / 100);
 			break;
 		case "Sonic Boom":
 			singletonDamageValue = 20;
