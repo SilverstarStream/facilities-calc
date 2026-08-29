@@ -24,15 +24,7 @@ $("#p2 .isActivated").bind("change", function () {
 });
 
 $("#maxR").change(function () {
-	if (this.checked) {
-		for (var i = 0; i < 4; i++) {
-			$("#maxR" + (i + 1)).prop("checked", true);
-		}
-	} else {
-		for (var i = 0; i < 4; i++) {
-			$("#maxR" + (i + 1)).prop("checked", false);
-		}
-	}
+	applyMaxMoveProperty("R", this.checked);
 });
 
 $("#autoivsR").change(function () {
@@ -259,7 +251,7 @@ function setUpDamageRangeText(result, moveHits, mainDamageInfo, firstHitDamageIn
 	} else if (result.firstHitDamage) {
 		let qualifier = "hit";
 		let firstQualifier = qualifier;
-		if (moveHits > 1 && (result.teraShellDamage || result.gemFirstAttack)) {
+		if (moveHits > 1 && (result.teraShellDamage || result.isFirstAttack)) {
 			qualifier = "attack " + qualifier;
 			firstQualifier = qualifier + "s";
 		}
