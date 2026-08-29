@@ -1655,7 +1655,7 @@ function getAssembledDamageInfo(result, moveHits, isFirstHit) {
 		if (!isFirstHit) {
 			return recurseDamageInfo(resultDamageInfo, moveHits);
 		}
-		if (result.teraShellDamage || result.gemFirstAttack) {
+		if (result.teraShellDamage || result.isFirstAttack) {
 			return recurseDamageInfo(damageInfoFromArray(result.firstHitDamage), moveHits);
 		}
 		return combineDamageInfo(recurseDamageInfo(resultDamageInfo, moveHits - 1), damageInfoFromArray(result.firstHitDamage));

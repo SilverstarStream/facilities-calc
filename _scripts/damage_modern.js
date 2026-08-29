@@ -1084,7 +1084,7 @@ function recalcOtherHits(attacker, defender, move, field, description, result,
 	// recalc final BP
 	let isGemApplied = applyGem(attacker, move);
 	if (isGemApplied) {
-		result.gemFirstAttack = true;
+		result.isFirstAttack = true;
 	}
 	if (isGemApplied || applyKnockOffBoost(attacker, defender, move, field.terrain)) {
 		isFirstHit = false;
@@ -1124,6 +1124,7 @@ function recalcOtherHits(attacker, defender, move, field, description, result,
 	// recalc STAB mod
 	if (attacker.isTerastal && attacker.teraType === "Stellar" && !attacker.name.includes("Terapagos")) {
 		isFirstHit = false;
+		result.isFirstAttack = true;
 		stabMod = calcSTABMod(attacker, move, {});
 	}
 
