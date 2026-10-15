@@ -277,7 +277,10 @@ function getDamageResultADV(attacker, defender, move, field) {
 		description.attackerAbility = attacker.ability;
 	}
 
-	baseDamage = Math.max(1, baseDamage) + 2;
+	if (isPhysical) {
+		baseDamage = Math.max(1, baseDamage)
+	}
+	baseDamage += 2;
 
 	if (isCritical) {
 		baseDamage *= 2;
