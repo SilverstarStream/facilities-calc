@@ -251,7 +251,7 @@ function getDamageResultADV(attacker, defender, move, field) {
 			if (field.format === "singles") {
 				baseDamage = Math.floor(baseDamage / 2);
 			} else {
-				baseDamage = Math.floor(baseDamage * 2 / 3);
+				baseDamage = 2 * Math.floor(baseDamage / 3);
 				description.isDoublesScreen = true;
 			}
 		}
